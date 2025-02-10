@@ -48,7 +48,7 @@ const checkSolution = (board: number[][], solution: number[][]): boolean => {
 export const fetchNewPuzzle = createAsyncThunk(
   'sudoku/fetchNewPuzzle',
   async (difficulty: Difficulty) => {
-    const response = await fetch(`http://localhost:5000/api/Sudoku?difficulty=${difficulty}`)
+    const response = await fetch(`https://sudokupuzzler-ahhjfdb5hraycff8.swedencentral-01.azurewebsites.net/api/Sudoku?difficulty=${difficulty}`)
     if (!response.ok) {
       throw new Error('Failed to fetch puzzle')
     }
