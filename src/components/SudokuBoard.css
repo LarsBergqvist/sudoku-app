@@ -106,4 +106,37 @@
   60% {
     transform: translateY(-10px);
   }
+}
+
+.game-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.undo-button {
+  padding: 8px 16px;
+  font-size: 16px;
+  background-color: #607d8b;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.undo-button:hover:not(:disabled) {
+  background-color: #455a64;
+}
+
+.undo-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.undo-button:active:not(:disabled) {
+  transform: scale(0.98);
 } 

@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
-import { fetchNewPuzzle, updateCell, type Difficulty } from '../store/sudokuSlice'
+import { fetchNewPuzzle, updateCell, undo, type Difficulty } from '../store/sudokuSlice'
 import './SudokuBoard.css'
 
 const SudokuBoard = () => {
   const dispatch = useAppDispatch()
-  const { board, loading, error, isComplete } = useAppSelector((state) => state.sudoku)
+  const { board, loading, error, isComplete, history } = useAppSelector((state) => state.sudoku)
 
   useEffect(() => {
     dispatch(fetchNewPuzzle('Basic'))
@@ -58,25 +58,34 @@ const SudokuBoard = () => {
           </div>
         ))}
       </div>
-      <div className="difficulty-buttons">
+      <div className="game-controls">
         <button 
-          className="new-game-button basic" 
-          onClick={() => handleNewGame('Basic')}
+          className="undo-button" 
+          onClick={() => dispatch(undo())}
+          disabled={history.length === 0}
         >
-          New Basic Game
+          ↩ Undo
         </button>
-        <button 
-          className="new-game-button hard" 
-          onClick={() => handleNewGame('Hard')}
-        >
-          New Hard Game
-        </button>
-        <button 
-          className="new-game-button very-hard" 
-          onClick={() => handleNewGame('VeryHard')}
-        >
-          New Very Hard Game
-        </button>
+        <div className="difficulty-buttons">
+          <button 
+            className="new-game-button basic" 
+            onClick={() => handleNewGame('Basic')}
+          >
+            New Basic Game
+          </button>
+          <button 
+            className="new-game-button hard" 
+            onClick={() => handleNewGame('Hard')}
+          >
+            New Hard Game
+          </button>
+          <button 
+            className="new-game-button very-hard" 
+            onClick={() => handleNewGame('VeryHard')}
+          >
+            New Very Hard Game
+          </button>
+        </div>
       </div>
     </div>
   )

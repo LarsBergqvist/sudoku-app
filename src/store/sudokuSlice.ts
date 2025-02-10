@@ -9,6 +9,7 @@ interface SudokuState {
   loading: boolean
   error: string | null
   isComplete: boolean
+  history: number[][][]  // Add history array to store previous board states
 }
 
 const initialState: SudokuState = {
@@ -16,7 +17,8 @@ const initialState: SudokuState = {
   solution: null,
   loading: false,
   error: null,
-  isComplete: false
+  isComplete: false,
+  history: []  // Initialize empty history
 }
 
 const parseGridString = (gridString: string): number[][] => {
@@ -64,10 +66,24 @@ const sudokuSlice = createSlice({
   reducers: {
     updateCell: (state, action: PayloadAction<{ row: number; col: number; value: number }>) => {
       const { row, col, value } = action.payload
+      
+      // Save current board state to history before updating
+      state.history.push(state.board.map(row => [...row]))
+      
       state.board[row][col] = value
       
       if (state.solution) {
         state.isComplete = checkSolution(state.board, state.solution)
+      }
+    },
+    undo: (state) => {
+      if (state.history.length > 0) {
+        // Restore the last board state
+        state.board = state.history.pop()!
+        // Check if the restored state is complete
+        if (state.solution) {
+          state.isComplete = checkSolution(state.board, state.solution)
+        }
       }
     }
   },
@@ -77,12 +93,14 @@ const sudokuSlice = createSlice({
         state.loading = true
         state.error = null
         state.isComplete = false
+        state.history = []  // Clear history when starting new game
       })
       .addCase(fetchNewPuzzle.fulfilled, (state, action) => {
         state.loading = false
         state.board = action.payload.grid
         state.solution = action.payload.solution
         state.isComplete = false
+        state.history = []  // Clear history when starting new game
       })
       .addCase(fetchNewPuzzle.rejected, (state, action) => {
         state.loading = false
@@ -91,5 +109,5 @@ const sudokuSlice = createSlice({
   }
 })
 
-export const { updateCell } = sudokuSlice.actions
+export const { updateCell, undo } = sudokuSlice.actions
 export default sudokuSlice.reducer 
