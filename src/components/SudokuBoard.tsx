@@ -26,7 +26,7 @@ const SudokuBoard = () => {
     setSelectedCell({ row, col })
     setSelectorPosition({
       x: rect.left + rect.width / 2,
-      y: rect.top
+      y: rect.top + rect.height / 2
     })
   }
 
