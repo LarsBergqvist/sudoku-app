@@ -39,21 +39,71 @@
   gap: 20px;
 }
 
+.difficulty-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
 .new-game-button {
   padding: 10px 20px;
   font-size: 16px;
-  background-color: #4CAF50;
-  color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s;
+  color: white;
 }
 
-.new-game-button:hover {
+.new-game-button.basic {
+  background-color: #4CAF50;
+}
+
+.new-game-button.basic:hover {
   background-color: #45a049;
 }
 
+.new-game-button.hard {
+  background-color: #ff9800;
+}
+
+.new-game-button.hard:hover {
+  background-color: #f57c00;
+}
+
+.new-game-button.very-hard {
+  background-color: #f44336;
+}
+
+.new-game-button.very-hard:hover {
+  background-color: #d32f2f;
+}
+
 .new-game-button:active {
-  background-color: #3d8b40;
+  transform: scale(0.98);
+}
+
+.victory-message {
+  background-color: #4CAF50;
+  color: white;
+  padding: 15px 30px;
+  border-radius: 8px;
+  font-size: 1.2em;
+  font-weight: bold;
+  text-align: center;
+  animation: bounce 0.5s ease;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-20px);
+  }
+  60% {
+    transform: translateY(-10px);
+  }
 } 

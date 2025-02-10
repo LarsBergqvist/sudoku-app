@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
-import { fetchNewPuzzle, updateCell } from '../store/sudokuSlice'
+import { fetchNewPuzzle, updateCell, type Difficulty } from '../store/sudokuSlice'
 import './SudokuBoard.css'
 
 const SudokuBoard = () => {
   const dispatch = useAppDispatch()
-  const { board, loading, error } = useAppSelector((state) => state.sudoku)
+  const { board, loading, error, isComplete } = useAppSelector((state) => state.sudoku)
 
   useEffect(() => {
-    dispatch(fetchNewPuzzle())
+    dispatch(fetchNewPuzzle('Basic'))
   }, [dispatch])
 
   const handleCellChange = (row: number, col: number, value: string) => {
@@ -16,6 +16,10 @@ const SudokuBoard = () => {
     if (isNaN(newValue) || newValue < 0 || newValue > 9) return
 
     dispatch(updateCell({ row, col, value: newValue }))
+  }
+
+  const handleNewGame = (difficulty: Difficulty) => {
+    dispatch(fetchNewPuzzle(difficulty))
   }
 
   if (loading) {
@@ -26,13 +30,18 @@ const SudokuBoard = () => {
     return (
       <div>
         <p>Error: {error}</p>
-        <button onClick={() => dispatch(fetchNewPuzzle())}>Try Again</button>
+        <button onClick={() => dispatch(fetchNewPuzzle('Basic'))}>Try Again</button>
       </div>
     )
   }
 
   return (
     <div className="sudoku-container">
+      {isComplete && (
+        <div className="victory-message">
+          🎉 Congratulations! You've solved the puzzle! 🎉
+        </div>
+      )}
       <div className="sudoku-board">
         {board.map((row, rowIndex) => (
           <div key={rowIndex} className="row">
@@ -49,9 +58,26 @@ const SudokuBoard = () => {
           </div>
         ))}
       </div>
-      <button className="new-game-button" onClick={() => dispatch(fetchNewPuzzle())}>
-        New Game
-      </button>
+      <div className="difficulty-buttons">
+        <button 
+          className="new-game-button basic" 
+          onClick={() => handleNewGame('Basic')}
+        >
+          New Basic Game
+        </button>
+        <button 
+          className="new-game-button hard" 
+          onClick={() => handleNewGame('Hard')}
+        >
+          New Hard Game
+        </button>
+        <button 
+          className="new-game-button very-hard" 
+          onClick={() => handleNewGame('VeryHard')}
+        >
+          New Very Hard Game
+        </button>
+      </div>
     </div>
   )
 }
