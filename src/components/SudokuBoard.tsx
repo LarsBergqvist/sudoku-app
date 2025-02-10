@@ -1,55 +1,21 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
+import { useAppDispatch, useAppSelector } from '../store/hooks'
+import { fetchNewPuzzle, updateCell } from '../store/sudokuSlice'
 import './SudokuBoard.css'
 
 const SudokuBoard = () => {
-  const [board, setBoard] = useState<number[][]>(
-    Array(9).fill(null).map(() => Array(9).fill(0))
-  )
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-
-  const parseGridString = (gridString: string): number[][] => {
-    const grid: number[][] = []
-    for (let i = 0; i < 9; i++) {
-      const row: number[] = []
-      for (let j = 0; j < 9; j++) {
-        const char = gridString[i * 9 + j]
-        row.push(char === ' ' || char === '.' ? 0 : parseInt(char))
-      }
-      grid.push(row)
-    }
-    return grid
-  }
+  const dispatch = useAppDispatch()
+  const { board, loading, error } = useAppSelector((state) => state.sudoku)
 
   useEffect(() => {
-    fetchNewPuzzle()
-  }, [])
-
-  const fetchNewPuzzle = async () => {
-    try {
-      setLoading(true)
-      setError(null)
-      const response = await fetch('http://localhost:5000/api/Sudoku?dificulty=basic')
-      if (!response.ok) {
-        throw new Error('Failed to fetch puzzle')
-      }
-      const data = await response.json()
-      const parsedGrid = parseGridString(data.grid)
-      setBoard(parsedGrid)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load puzzle')
-    } finally {
-      setLoading(false)
-    }
-  }
+    dispatch(fetchNewPuzzle())
+  }, [dispatch])
 
   const handleCellChange = (row: number, col: number, value: string) => {
     const newValue = value === '' ? 0 : parseInt(value)
     if (isNaN(newValue) || newValue < 0 || newValue > 9) return
 
-    const newBoard = board.map((r) => [...r])
-    newBoard[row][col] = newValue
-    setBoard(newBoard)
+    dispatch(updateCell({ row, col, value: newValue }))
   }
 
   if (loading) {
@@ -60,7 +26,7 @@ const SudokuBoard = () => {
     return (
       <div>
         <p>Error: {error}</p>
-        <button onClick={fetchNewPuzzle}>Try Again</button>
+        <button onClick={() => dispatch(fetchNewPuzzle())}>Try Again</button>
       </div>
     )
   }
@@ -83,7 +49,7 @@ const SudokuBoard = () => {
           </div>
         ))}
       </div>
-      <button className="new-game-button" onClick={fetchNewPuzzle}>
+      <button className="new-game-button" onClick={() => dispatch(fetchNewPuzzle())}>
         New Game
       </button>
     </div>
