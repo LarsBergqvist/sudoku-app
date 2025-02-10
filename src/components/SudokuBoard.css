@@ -17,6 +17,20 @@
   font-size: 20px;
   margin: 0;
   padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+  background: white;
+}
+
+.cell:hover {
+  background-color: #f0f0f0;
+}
+
+.cell:active {
+  background-color: #e0e0e0;
 }
 
 .cell:nth-child(3n) {
@@ -139,4 +153,25 @@
 
 .undo-button:active:not(:disabled) {
   transform: scale(0.98);
+}
+
+@media (max-width: 480px) {
+  .cell {
+    width: 35px;
+    height: 35px;
+    font-size: 18px;
+  }
+
+  .sudoku-board {
+    padding: 5px;
+  }
+
+  .difficulty-buttons {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .new-game-button {
+    width: 100%;
+  }
 } 

@@ -1,21 +1,44 @@
-import  { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { fetchNewPuzzle, updateCell, undo, type Difficulty } from '../store/sudokuSlice'
+import NumberSelector from './NumberSelector'
 import './SudokuBoard.css'
+
+interface CellPosition {
+  row: number
+  col: number
+}
 
 const SudokuBoard = () => {
   const dispatch = useAppDispatch()
   const { board, loading, error, isComplete, history } = useAppSelector((state) => state.sudoku)
+  const [selectedCell, setSelectedCell] = useState<CellPosition | null>(null)
+  const [selectorPosition, setSelectorPosition] = useState({ x: 0, y: 0 })
 
   useEffect(() => {
     dispatch(fetchNewPuzzle('Basic'))
   }, [dispatch])
 
-  const handleCellChange = (row: number, col: number, value: string) => {
-    const newValue = value === '' ? 0 : parseInt(value)
-    if (isNaN(newValue) || newValue < 0 || newValue > 9) return
+  const handleCellClick = (row: number, col: number, event: React.MouseEvent<HTMLDivElement>) => {
+    const cellElement = event.currentTarget
+    const rect = cellElement.getBoundingClientRect()
+    
+    setSelectedCell({ row, col })
+    setSelectorPosition({
+      x: rect.left + rect.width / 2,
+      y: rect.top
+    })
+  }
 
-    dispatch(updateCell({ row, col, value: newValue }))
+  const handleNumberSelect = (value: number) => {
+    if (selectedCell) {
+      dispatch(updateCell({ 
+        row: selectedCell.row, 
+        col: selectedCell.col, 
+        value 
+      }))
+    }
+    setSelectedCell(null)
   }
 
   const handleNewGame = (difficulty: Difficulty) => {
@@ -46,18 +69,24 @@ const SudokuBoard = () => {
         {board.map((row, rowIndex) => (
           <div key={rowIndex} className="row">
             {row.map((cell, colIndex) => (
-              <input
+              <div
                 key={`${rowIndex}-${colIndex}`}
-                type="text"
-                value={cell === 0 ? '' : cell}
-                onChange={(e) => handleCellChange(rowIndex, colIndex, e.target.value)}
                 className="cell"
-                maxLength={1}
-              />
+                onClick={(e) => handleCellClick(rowIndex, colIndex, e)}
+              >
+                {cell !== 0 && cell}
+              </div>
             ))}
           </div>
         ))}
       </div>
+      {selectedCell && (
+        <NumberSelector
+          position={selectorPosition}
+          onSelect={handleNumberSelect}
+          onClose={() => setSelectedCell(null)}
+        />
+      )}
       <div className="game-controls">
         <button 
           className="undo-button" 
