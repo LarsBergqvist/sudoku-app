@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
+import { API_URL } from '../config'
 
 export type Difficulty = 'Basic' | 'Hard' | 'VeryHard'
 
@@ -51,7 +52,7 @@ const validateBoard = (board: number[][], solution: number[][]): boolean[][] => 
 export const fetchNewPuzzle = createAsyncThunk(
   'sudoku/fetchNewPuzzle',
   async (difficulty: Difficulty) => {
-    const response = await fetch(`https://sudokupuzzler-ahhjfdb5hraycff8.swedencentral-01.azurewebsites.net/api/Sudoku?difficulty=${difficulty}`)
+    const response = await fetch(`${API_URL}/api/Sudoku?difficulty=${difficulty}`)
     if (!response.ok) {
       throw new Error('Failed to fetch puzzle')
     }
