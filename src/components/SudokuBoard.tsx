@@ -11,7 +11,7 @@ interface CellPosition {
 
 const SudokuBoard = () => {
   const dispatch = useAppDispatch()
-  const { board, loading, error, isComplete, history } = useAppSelector((state) => state.sudoku)
+  const { board, loading, error, isComplete, history, incorrectCells } = useAppSelector((state) => state.sudoku)
   const [selectedCell, setSelectedCell] = useState<CellPosition | null>(null)
   const [selectorPosition, setSelectorPosition] = useState({ x: 0, y: 0 })
 
@@ -71,7 +71,7 @@ const SudokuBoard = () => {
             {row.map((cell, colIndex) => (
               <div
                 key={`${rowIndex}-${colIndex}`}
-                className="cell"
+                className={`cell ${incorrectCells[rowIndex][colIndex] ? 'incorrect' : ''}`}
                 onClick={(e) => handleCellClick(rowIndex, colIndex, e)}
               >
                 {cell !== 0 && cell}

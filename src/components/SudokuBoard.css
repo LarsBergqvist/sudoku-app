@@ -174,4 +174,17 @@
   .new-game-button {
     width: 100%;
   }
+}
+
+.cell.incorrect {
+  color: #d32f2f;
+  background-color: #ffebee;
+}
+
+.cell.incorrect:hover {
+  background-color: #ffcdd2;
+}
+
+.cell.incorrect:active {
+  background-color: #ef9a9a;
 } 
