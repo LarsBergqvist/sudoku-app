@@ -14,12 +14,23 @@ const SudokuBoard = () => {
   const { board, loading, error, isComplete, history, incorrectCells } = useAppSelector((state) => state.sudoku)
   const [selectedCell, setSelectedCell] = useState<CellPosition | null>(null)
   const [selectorPosition, setSelectorPosition] = useState({ x: 0, y: 0 })
+  const [initialBoard, setInitialBoard] = useState<number[][]>([])
 
   useEffect(() => {
     dispatch(fetchNewPuzzle('Basic'))
   }, [dispatch])
 
+  useEffect(() => {
+    if (!loading && board.length > 0) {
+      setInitialBoard(board.map(row => [...row]))
+    }
+  }, [loading, board])
+
   const handleCellClick = (row: number, col: number, event: React.MouseEvent<HTMLDivElement>) => {
+    if (initialBoard[row]?.[col] !== 0) {
+      return
+    }
+
     const cellElement = event.currentTarget
     const rect = cellElement.getBoundingClientRect()
     
@@ -71,7 +82,9 @@ const SudokuBoard = () => {
             {row.map((cell, colIndex) => (
               <div
                 key={`${rowIndex}-${colIndex}`}
-                className={`cell ${incorrectCells[rowIndex][colIndex] ? 'incorrect' : ''}`}
+                className={`cell 
+                  ${incorrectCells[rowIndex][colIndex] ? 'incorrect' : ''} 
+                  ${initialBoard[rowIndex]?.[colIndex] !== 0 ? 'initial' : ''}`}
                 onClick={(e) => handleCellClick(rowIndex, colIndex, e)}
               >
                 {cell !== 0 && cell}

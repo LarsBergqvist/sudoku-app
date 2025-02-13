@@ -1,6 +1,6 @@
 .sudoku-board {
   display: inline-block;
-  padding: 15px;
+  padding: 10px;
   background: linear-gradient(45deg, #8B4513, #A0522D);
   border: 8px solid #5D4037;
   border-radius: 8px;
@@ -199,7 +199,7 @@
   }
 
   .sudoku-board {
-    padding: 8px;
+    padding: 5px;
     border-width: 4px;
   }
 
@@ -217,10 +217,16 @@
   }
 
   .sudoku-container {
-    padding: 10px;
-    width: 95%;
+    padding: 8px;
+    width: 98%;
     max-width: 100%;
     margin: 0 auto;
+    gap: 12px;
+  }
+
+  .game-controls {
+    margin-top: 12px;
+    gap: 8px;
   }
 }
 
@@ -232,8 +238,18 @@
   }
 
   .sudoku-board {
-    padding: 5px;
+    padding: 3px;
     border-width: 3px;
+  }
+
+  .sudoku-container {
+    padding: 5px;
+    gap: 8px;
+  }
+
+  .game-controls {
+    margin-top: 8px;
+    gap: 5px;
   }
 }
 
@@ -248,4 +264,10 @@
 
 .cell.incorrect:active {
   background-color: #D6ABA3;
+}
+
+.cell.initial {
+  background-color: #f0f0f0;
+  cursor: not-allowed;
+  font-weight: bold;
 } 
