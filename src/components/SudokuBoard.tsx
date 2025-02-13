@@ -84,8 +84,7 @@ const SudokuBoard = () => {
                 key={`${rowIndex}-${colIndex}`}
                 className={`cell 
                   ${incorrectCells[rowIndex][colIndex] ? 'incorrect' : ''} 
-                  ${initialBoard[rowIndex]?.[colIndex] !== 0 ? 'initial' : ''}
-                  ${selectedCell?.row === rowIndex && selectedCell?.col === colIndex ? 'selected' : ''}`}
+                  ${initialBoard[rowIndex]?.[colIndex] !== 0 ? 'initial' : ''}`}
                 onClick={(e) => handleCellClick(rowIndex, colIndex, e)}
               >
                 {cell !== 0 && cell}
