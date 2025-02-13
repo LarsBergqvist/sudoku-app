@@ -270,4 +270,23 @@
   background-color: #f0f0f0;
   cursor: not-allowed;
   font-weight: bold;
+}
+
+.cell.selected {
+  background-color: #FFE4B5;
+  box-shadow: inset 0 0 8px rgba(0,0,0,0.2);
+  transform: scale(1.05);
+  z-index: 1;
+}
+
+.cell.selected:hover {
+  background-color: #FFE4B5;
+}
+
+.cell.selected.incorrect {
+  background-color: #FFCDD2;
+}
+
+.cell.selected.incorrect:hover {
+  background-color: #FFCDD2;
 } 
