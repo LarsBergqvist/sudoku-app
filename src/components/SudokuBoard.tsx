@@ -24,13 +24,14 @@ const SudokuBoard = () => {
     if (!loading && board.length > 0) {
       setInitialBoard(board.map(row => [...row]))
     }
-  }, [loading, board])
+  }, [loading])
 
   const handleCellClick = (row: number, col: number, event: React.MouseEvent<HTMLDivElement>) => {
+    // Only prevent clicking if it's an initial board cell
     if (initialBoard[row]?.[col] !== 0) {
       return
     }
-
+  
     const cellElement = event.currentTarget
     const rect = cellElement.getBoundingClientRect()
     
