@@ -3,13 +3,6 @@ import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { fetchNewPuzzle, updateCell, undo, type Difficulty, selectCell } from '../store/sudokuSlice'
 import NumberSelector from './NumberSelector'
 import './SudokuBoard.css'
-import { useDispatch, useSelector } from 'react-redux'
-import { RootState } from '../store/store'
-
-interface CellPosition {
-  row: number
-  col: number
-}
 
 const SudokuBoard = () => {
   const dispatch = useAppDispatch()
