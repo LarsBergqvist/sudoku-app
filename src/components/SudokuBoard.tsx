@@ -28,8 +28,8 @@ const SudokuBoard = () => {
   }, [loading])
 
   const handleCellClick = (row: number, col: number, event: React.MouseEvent<HTMLDivElement>) => {
-    // If the cell already has an initial value (not editable), deselect
-    if (board[row][col] !== 0) {
+    // If the cell is an initial value (not editable), deselect
+    if (initialBoard[row]?.[col] !== 0) {
       dispatch(selectCell(null))
       return
     }
