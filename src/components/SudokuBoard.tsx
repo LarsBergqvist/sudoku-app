@@ -3,8 +3,6 @@ import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { fetchNewPuzzle, updateCell, undo, type Difficulty, selectCell } from '../store/sudokuSlice'
 import NumberSelector from './NumberSelector'
 import './SudokuBoard.css'
-import { useDispatch, useSelector } from 'react-redux'
-import { RootState } from '../store/store'
 
 const SudokuBoard = () => {
   const dispatch = useAppDispatch()
