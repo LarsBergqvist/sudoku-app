@@ -12,6 +12,7 @@ interface SudokuState {
   isComplete: boolean
   history: number[][][]
   incorrectCells: boolean[][]  // Add this to track incorrect cells
+  selectedCell: { row: number; col: number } | null  // Add this to track selected cell
 }
 
 const initialState: SudokuState = {
@@ -21,7 +22,8 @@ const initialState: SudokuState = {
   error: null,
   isComplete: false,
   history: [],
-  incorrectCells: Array(9).fill(null).map(() => Array(9).fill(false))
+  incorrectCells: Array(9).fill(null).map(() => Array(9).fill(false)),
+  selectedCell: null  // Initialize as null
 }
 
 const parseGridString = (gridString: string): number[][] => {
@@ -93,6 +95,9 @@ const sudokuSlice = createSlice({
           state.isComplete = isFilled && !state.incorrectCells.some(row => row.some(cell => cell))
         }
       }
+    },
+    selectCell: (state, action: PayloadAction<{ row: number; col: number } | null>) => {
+      state.selectedCell = action.payload
     }
   },
   extraReducers: (builder) => {
@@ -103,6 +108,7 @@ const sudokuSlice = createSlice({
         state.isComplete = false
         state.history = []
         state.incorrectCells = Array(9).fill(null).map(() => Array(9).fill(false))
+        state.selectedCell = null  // Reset selected cell
       })
       .addCase(fetchNewPuzzle.fulfilled, (state, action) => {
         state.loading = false
@@ -111,6 +117,7 @@ const sudokuSlice = createSlice({
         state.isComplete = false
         state.history = []
         state.incorrectCells = Array(9).fill(null).map(() => Array(9).fill(false))
+        state.selectedCell = null  // Reset selected cell
       })
       .addCase(fetchNewPuzzle.rejected, (state, action) => {
         state.loading = false
@@ -119,5 +126,5 @@ const sudokuSlice = createSlice({
   }
 })
 
-export const { updateCell, undo } = sudokuSlice.actions
+export const { updateCell, undo, selectCell } = sudokuSlice.actions
 export default sudokuSlice.reducer 

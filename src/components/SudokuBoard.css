@@ -270,4 +270,14 @@
   background-color: #f0f0f0;
   cursor: not-allowed;
   font-weight: bold;
+}
+
+.cell.selected {
+  background-color: #e3f2fd;
+  border: 2px solid #2196f3;
+}
+
+/* Optional: Add a lighter highlight for cells in the same row/column as selected */
+.cell.same-row-col {
+  background-color: #f5f9ff;
 } 
