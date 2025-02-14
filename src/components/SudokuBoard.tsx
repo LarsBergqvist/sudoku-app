@@ -6,11 +6,6 @@ import './SudokuBoard.css'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState } from '../store/store'
 
-interface CellPosition {
-  row: number
-  col: number
-}
-
 const SudokuBoard = () => {
   const dispatch = useAppDispatch()
   const { board, loading, error, isComplete, history, incorrectCells, selectedCell } = useAppSelector((state) => state.sudoku)
