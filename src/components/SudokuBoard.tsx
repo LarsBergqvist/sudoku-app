@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
-import { fetchNewPuzzle, updateCell, undo, type Difficulty } from '../store/sudokuSlice'
+import { fetchNewPuzzle, updateCell, undo, type Difficulty, selectCell } from '../store/sudokuSlice'
 import NumberSelector from './NumberSelector'
 import './SudokuBoard.css'
+import { useDispatch, useSelector } from 'react-redux'
+import { RootState } from '../store/store'
 
 interface CellPosition {
   row: number
@@ -11,23 +13,50 @@ interface CellPosition {
 
 const SudokuBoard = () => {
   const dispatch = useAppDispatch()
-  const { board, loading, error, isComplete, history, incorrectCells } = useAppSelector((state) => state.sudoku)
-  const [selectedCell, setSelectedCell] = useState<CellPosition | null>(null)
+  const { board, loading, error, isComplete, history, incorrectCells, selectedCell } = useAppSelector((state) => state.sudoku)
   const [selectorPosition, setSelectorPosition] = useState({ x: 0, y: 0 })
+  const [initialBoard, setInitialBoard] = useState<number[][]>([])
 
   useEffect(() => {
     dispatch(fetchNewPuzzle('Basic'))
   }, [dispatch])
 
+  useEffect(() => {
+    if (!loading && board.length > 0) {
+      setInitialBoard(board.map(row => [...row]))
+    }
+  }, [loading])
+
   const handleCellClick = (row: number, col: number, event: React.MouseEvent<HTMLDivElement>) => {
+    // If the cell is an initial value (not editable), deselect
+    if (initialBoard[row]?.[col] !== 0) {
+      dispatch(selectCell(null))
+      return
+    }
+
+    // Get the position of the clicked cell for the number selector
     const cellElement = event.currentTarget
     const rect = cellElement.getBoundingClientRect()
-    
-    setSelectedCell({ row, col })
     setSelectorPosition({
       x: rect.left + rect.width / 2,
       y: rect.top + rect.height / 2
     })
+
+    // If clicking the same cell that's already selected, deselect it
+    if (selectedCell?.row === row && selectedCell?.col === col) {
+      dispatch(selectCell(null))
+    } else {
+      // Otherwise, select the new cell
+      dispatch(selectCell({ row, col }))
+    }
+  }
+
+  const handleBoardClick = (e: React.MouseEvent) => {
+    // If clicking outside the cells (on the board background),
+    // deselect the current cell
+    if ((e.target as HTMLElement).classList.contains('board-background')) {
+      dispatch(selectCell(null))
+    }
   }
 
   const handleNumberSelect = (value: number) => {
@@ -38,7 +67,7 @@ const SudokuBoard = () => {
         value 
       }))
     }
-    setSelectedCell(null)
+    dispatch(selectCell(null))
   }
 
   const handleNewGame = (difficulty: Difficulty) => {
@@ -66,25 +95,30 @@ const SudokuBoard = () => {
         </div>
       )}
       <div className="sudoku-board">
-        {board.map((row, rowIndex) => (
-          <div key={rowIndex} className="row">
-            {row.map((cell, colIndex) => (
-              <div
-                key={`${rowIndex}-${colIndex}`}
-                className={`cell ${incorrectCells[rowIndex][colIndex] ? 'incorrect' : ''}`}
-                onClick={(e) => handleCellClick(rowIndex, colIndex, e)}
-              >
-                {cell !== 0 && cell}
-              </div>
-            ))}
-          </div>
-        ))}
+        <div className="board-background" onClick={handleBoardClick}>
+          {board.map((row, rowIndex) => (
+            <div key={rowIndex} className="row">
+              {row.map((cell, colIndex) => (
+                <div
+                  key={`${rowIndex}-${colIndex}`}
+                  className={`cell 
+                    ${incorrectCells[rowIndex][colIndex] ? 'incorrect' : ''} 
+                    ${initialBoard[rowIndex]?.[colIndex] !== 0 ? 'initial' : ''}
+                    ${selectedCell?.row === rowIndex && selectedCell?.col === colIndex ? 'selected' : ''}`}
+                  onClick={(e) => handleCellClick(rowIndex, colIndex, e)}
+                >
+                  {cell !== 0 && cell}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
       {selectedCell && (
         <NumberSelector
           position={selectorPosition}
           onSelect={handleNumberSelect}
-          onClose={() => setSelectedCell(null)}
+          onClose={() => dispatch(selectCell(null))}
         />
       )}
       <div className="game-controls">
