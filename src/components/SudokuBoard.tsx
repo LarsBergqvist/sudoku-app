@@ -27,12 +27,20 @@ const SudokuBoard = () => {
     }
   }, [loading])
 
-  const handleCellClick = (row: number, col: number) => {
+  const handleCellClick = (row: number, col: number, event: React.MouseEvent<HTMLDivElement>) => {
     // If the cell already has an initial value (not editable), deselect
     if (board[row][col] !== 0) {
       dispatch(selectCell(null))
       return
     }
+
+    // Get the position of the clicked cell for the number selector
+    const cellElement = event.currentTarget
+    const rect = cellElement.getBoundingClientRect()
+    setSelectorPosition({
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2
+    })
 
     // If clicking the same cell that's already selected, deselect it
     if (selectedCell?.row === row && selectedCell?.col === col) {
@@ -97,7 +105,7 @@ const SudokuBoard = () => {
                     ${incorrectCells[rowIndex][colIndex] ? 'incorrect' : ''} 
                     ${initialBoard[rowIndex]?.[colIndex] !== 0 ? 'initial' : ''}
                     ${selectedCell?.row === rowIndex && selectedCell?.col === colIndex ? 'selected' : ''}`}
-                  onClick={() => handleCellClick(rowIndex, colIndex)}
+                  onClick={(e) => handleCellClick(rowIndex, colIndex, e)}
                 >
                   {cell !== 0 && cell}
                 </div>
