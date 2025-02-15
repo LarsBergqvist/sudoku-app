@@ -14,6 +14,7 @@ interface SudokuState {
   incorrectCells: boolean[][]  // Add this to track incorrect cells
   selectedCell: { row: number; col: number } | null  // Add this to track selected cell
   currentDifficulty: Difficulty
+  showingIncorrect: boolean
 }
 
 interface SavedGameState {
@@ -33,7 +34,8 @@ const initialState: SudokuState = {
   history: [],
   incorrectCells: Array(9).fill(null).map(() => Array(9).fill(false)),
   selectedCell: null,
-  currentDifficulty: 'Basic'
+  currentDifficulty: 'Basic',
+  showingIncorrect: false
 }
 
 const parseGridString = (gridString: string): number[][] => {
@@ -143,6 +145,9 @@ const sudokuSlice = createSlice({
         state.isComplete = checkSolution(state.board) && 
           !state.incorrectCells.some(row => row.some(cell => cell))
       }
+    },
+    setShowingIncorrect: (state, action: PayloadAction<boolean>) => {
+      state.showingIncorrect = action.payload
     }
   },
   extraReducers: (builder) => {
@@ -176,5 +181,5 @@ const sudokuSlice = createSlice({
   }
 })
 
-export const { updateCell, undo, selectCell, loadSavedGameState } = sudokuSlice.actions
+export const { updateCell, undo, selectCell, loadSavedGameState, setShowingIncorrect } = sudokuSlice.actions
 export default sudokuSlice.reducer 

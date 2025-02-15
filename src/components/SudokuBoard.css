@@ -163,6 +163,11 @@
   margin-top: 20px;
 }
 
+.button-row {
+  display: flex;
+  gap: 10px;
+}
+
 .undo-button {
   padding: 8px 16px;
   font-size: 16px;
@@ -188,6 +193,27 @@
 }
 
 .undo-button:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.show-incorrect-button {
+  padding: 8px 16px;
+  font-size: 16px;
+  background: linear-gradient(145deg, #8B6B4F, #725544);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+  border: 2px solid rgba(0,0,0,0.1);
+  user-select: none;
+  touch-action: manipulation;
+}
+
+.show-incorrect-button:active {
+  background: linear-gradient(145deg, #725544, #8B6B4F);
   transform: scale(0.98);
 }
 
@@ -253,7 +279,7 @@
   }
 }
 
-.cell.correct {
+.cell.entered {
   background-color: #f0f0f0d3;
 }
 

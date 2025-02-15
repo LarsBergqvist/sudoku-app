@@ -1,12 +1,21 @@
 import { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
-import { fetchNewPuzzle, updateCell, undo, type Difficulty, selectCell, loadSavedGame, loadSavedGameState } from '../store/sudokuSlice'
+import { fetchNewPuzzle, updateCell, undo, type Difficulty, selectCell, loadSavedGame, loadSavedGameState, setShowingIncorrect } from '../store/sudokuSlice'
 import NumberSelector from './NumberSelector'
 import './SudokuBoard.css'
 
 const SudokuBoard = () => {
   const dispatch = useAppDispatch()
-  const { board, loading, error, isComplete, history, incorrectCells, selectedCell, solution } = useAppSelector((state) => state.sudoku)
+  const { 
+    board, 
+    loading, 
+    error, 
+    isComplete, 
+    history, 
+    incorrectCells, 
+    selectedCell, 
+    showingIncorrect 
+  } = useAppSelector((state) => state.sudoku)
   const [selectorPosition, setSelectorPosition] = useState({ x: 0, y: 0 })
   const [initialBoard, setInitialBoard] = useState<number[][]>(
     Array(9).fill(null).map(() => Array(9).fill(0))
@@ -152,8 +161,8 @@ const SudokuBoard = () => {
                 <div
                   key={`${rowIndex}-${colIndex}`}
                   className={`cell 
-                    ${incorrectCells[rowIndex][colIndex] ? 'incorrect' : ''}
-                    ${solution && board[rowIndex][colIndex] === solution[rowIndex][colIndex] && board[rowIndex][colIndex] !== 0 && !initialBoard[rowIndex][colIndex] ? 'correct' : ''}
+                    ${showingIncorrect && incorrectCells[rowIndex][colIndex] ? 'incorrect' : ''}
+                    ${board[rowIndex][colIndex] !== 0 ? 'entered' : ''}
                     ${initialBoard[rowIndex][colIndex] !== 0 ? 'initial' : ''}
                     ${selectedCell?.row === rowIndex && selectedCell?.col === colIndex ? 'selected' : ''}
                     `}
@@ -174,13 +183,25 @@ const SudokuBoard = () => {
         />
       )}
       <div className="game-controls">
-        <button 
-          className="undo-button" 
-          onClick={() => dispatch(undo())}
-          disabled={history.length === 0}
-        >
-          ↩ Undo
-        </button>
+        <div className="button-row">
+          <button 
+            className="show-incorrect-button"
+            onMouseDown={() => dispatch(setShowingIncorrect(true))}
+            onMouseUp={() => dispatch(setShowingIncorrect(false))}
+            onMouseLeave={() => dispatch(setShowingIncorrect(false))}
+            onTouchStart={() => dispatch(setShowingIncorrect(true))}
+            onTouchEnd={() => dispatch(setShowingIncorrect(false))}
+          >
+            Show incorrect
+          </button>
+          <button 
+            className="undo-button" 
+            onClick={() => dispatch(undo())}
+            disabled={history.length === 0}
+          >
+            ↩ Undo
+          </button>
+        </div>
         <div className="difficulty-buttons">
           <button 
             className="new-game-button basic" 
