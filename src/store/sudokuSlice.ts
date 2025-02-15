@@ -69,9 +69,11 @@ export const fetchNewPuzzle = createAsyncThunk(
       throw new Error('Failed to fetch puzzle')
     }
     const data = await response.json()
+    const grid = parseGridString(data.grid)
     return {
-      grid: parseGridString(data.grid),
-      solution: parseGridString(data.solution)
+      grid,
+      solution: parseGridString(data.solution),
+      initialBoard: grid.map(row => [...row])
     }
   }
 )
@@ -146,8 +148,8 @@ const sudokuSlice = createSlice({
         state.isComplete = false
         state.history = []
         state.incorrectCells = Array(9).fill(null).map(() => Array(9).fill(false))
-        state.selectedCell = null  // Reset selected cell
-        localStorage.removeItem('sudokuGameState') // Clear saved game when starting new
+        state.selectedCell = null
+        localStorage.removeItem('sudokuGameState')
       })
       .addCase(fetchNewPuzzle.fulfilled, (state, action) => {
         state.loading = false
@@ -156,10 +158,10 @@ const sudokuSlice = createSlice({
         state.isComplete = false
         state.history = []
         state.incorrectCells = Array(9).fill(null).map(() => Array(9).fill(false))
-        state.selectedCell = null  // Reset selected cell
+        state.selectedCell = null
         
-        // Save initial state
-        saveGameState(state, action.payload.grid)
+        // Save initial state with initialBoard
+        saveGameState(state, action.payload.initialBoard)
       })
       .addCase(fetchNewPuzzle.rejected, (state, action) => {
         state.loading = false

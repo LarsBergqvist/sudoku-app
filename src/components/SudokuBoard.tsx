@@ -20,12 +20,6 @@ const SudokuBoard = () => {
     }
   }, [dispatch])
 
-  useEffect(() => {
-    if (!loading && board.length > 0) {
-      setInitialBoard(board.map(row => [...row]))
-    }
-  }, [loading])
-
   const handleCellClick = (row: number, col: number, event: React.MouseEvent<HTMLDivElement>) => {
     // If the cell is an initial value (not editable), deselect
     if (initialBoard[row]?.[col] !== 0) {
@@ -71,6 +65,12 @@ const SudokuBoard = () => {
 
   const handleNewGame = (difficulty: Difficulty) => {
     dispatch(fetchNewPuzzle(difficulty))
+      .then((action) => {
+        if (action.payload) {
+          // @ts-ignore - we know the payload shape includes initialBoard
+          setInitialBoard(action.payload.initialBoard)
+        }
+      })
   }
 
   const handleKeyDown = (e: KeyboardEvent) => {
