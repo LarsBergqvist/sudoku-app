@@ -254,7 +254,7 @@
 }
 
 .cell.correct {
-  background-color: #f0f0f0b1;
+  background-color: #f0f0f0d3;
 }
 
 .cell.incorrect {
@@ -282,7 +282,7 @@
 }
 
 .cell.same-row-col {
-  background-color: #f5f9ffbf;
+  border: 2px solid #2196f3;
 }
 
 .cell.same-row-col:hover {

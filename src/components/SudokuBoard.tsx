@@ -8,7 +8,9 @@ const SudokuBoard = () => {
   const dispatch = useAppDispatch()
   const { board, loading, error, isComplete, history, incorrectCells, selectedCell, solution } = useAppSelector((state) => state.sudoku)
   const [selectorPosition, setSelectorPosition] = useState({ x: 0, y: 0 })
-  const [initialBoard, setInitialBoard] = useState<number[][]>([])
+  const [initialBoard, setInitialBoard] = useState<number[][]>(
+    Array(9).fill(null).map(() => Array(9).fill(0))
+  )
 
   useEffect(() => {
     const savedGame = loadSavedGame()
@@ -147,7 +149,7 @@ const SudokuBoard = () => {
                   className={`cell 
                     ${incorrectCells[rowIndex][colIndex] ? 'incorrect' : ''}
                     ${solution && board[rowIndex][colIndex] === solution[rowIndex][colIndex] && board[rowIndex][colIndex] !== 0 && !initialBoard[rowIndex][colIndex] ? 'correct' : ''}
-                    ${initialBoard[rowIndex]?.[colIndex] !== 0 ? 'initial' : ''}
+                    ${initialBoard[rowIndex][colIndex] !== 0 ? 'initial' : ''}
                     ${selectedCell?.row === rowIndex && selectedCell?.col === colIndex ? 'selected' : ''}
                     ${selectedCell && (selectedCell.row === rowIndex || selectedCell.col === colIndex) ? 'same-row-col' : ''}`}
                   onClick={(e) => handleCellClick(rowIndex, colIndex, e)}
