@@ -156,7 +156,7 @@ const SudokuBoard = () => {
                     ${solution && board[rowIndex][colIndex] === solution[rowIndex][colIndex] && board[rowIndex][colIndex] !== 0 && !initialBoard[rowIndex][colIndex] ? 'correct' : ''}
                     ${initialBoard[rowIndex][colIndex] !== 0 ? 'initial' : ''}
                     ${selectedCell?.row === rowIndex && selectedCell?.col === colIndex ? 'selected' : ''}
-                    ${selectedCell && (selectedCell.row === rowIndex || selectedCell.col === colIndex) ? 'same-row-col' : ''}`}
+                    `}
                   onClick={(e) => handleCellClick(rowIndex, colIndex, e)}
                 >
                   {cell !== 0 && cell}

@@ -278,15 +278,8 @@
 
 .cell.selected {
   background-color: #e3f2fd;
-  border: 2px solid #2196f3;
-}
-
-.cell.same-row-col {
-  border: 2px solid #2196f3;
-}
-
-.cell.same-row-col:hover {
-  background-color: #C99B6D;
+  outline: 5px solid  #2196f3;
+  outline-offset: -5px;
 }
 
 .cell.selected:hover {
