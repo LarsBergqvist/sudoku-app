@@ -11,8 +11,8 @@ interface SudokuState {
   error: string | null
   isComplete: boolean
   history: number[][][]
-  incorrectCells: boolean[][]  // Add this to track incorrect cells
-  selectedCell: { row: number; col: number } | null  // Add this to track selected cell
+  incorrectCells: boolean[][] 
+  selectedCell: { row: number; col: number } | null
   currentDifficulty: Difficulty
   showingIncorrect: boolean
 }
