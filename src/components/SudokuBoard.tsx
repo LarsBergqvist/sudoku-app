@@ -67,6 +67,50 @@ const SudokuBoard = () => {
     dispatch(fetchNewPuzzle(difficulty))
   }
 
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (!selectedCell) return
+
+    const { row, col } = selectedCell
+
+    switch (e.key) {
+      case 'ArrowUp':
+        if (row > 0) dispatch(selectCell({ row: row - 1, col }))
+        break
+      case 'ArrowDown':
+        if (row < 8) dispatch(selectCell({ row: row + 1, col }))
+        break
+      case 'ArrowLeft':
+        if (col > 0) dispatch(selectCell({ row, col: col - 1 }))
+        break
+      case 'ArrowRight':
+        if (col < 8) dispatch(selectCell({ row, col: col + 1 }))
+        break
+      case '1':
+      case '2':
+      case '3':
+      case '4':
+      case '5':
+      case '6':
+      case '7':
+      case '8':
+      case '9':
+        handleNumberSelect(parseInt(e.key))
+        break
+      case 'Backspace':
+      case 'Delete':
+        handleNumberSelect(0)
+        break
+      case 'Escape':
+        dispatch(selectCell(null))
+        break
+    }
+  }
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [selectedCell])
+
   if (loading) {
     return <div>Loading puzzle...</div>
   }
@@ -97,7 +141,8 @@ const SudokuBoard = () => {
                   className={`cell 
                     ${incorrectCells[rowIndex][colIndex] ? 'incorrect' : ''} 
                     ${initialBoard[rowIndex]?.[colIndex] !== 0 ? 'initial' : ''}
-                    ${selectedCell?.row === rowIndex && selectedCell?.col === colIndex ? 'selected' : ''}`}
+                    ${selectedCell?.row === rowIndex && selectedCell?.col === colIndex ? 'selected' : ''}
+                    ${selectedCell && (selectedCell.row === rowIndex || selectedCell.col === colIndex) ? 'same-row-col' : ''}`}
                   onClick={(e) => handleCellClick(rowIndex, colIndex, e)}
                 >
                   {cell !== 0 && cell}
