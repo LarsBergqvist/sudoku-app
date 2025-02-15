@@ -253,6 +253,10 @@
   }
 }
 
+.cell.correct {
+  background-color: #f0f0f0b1;
+}
+
 .cell.incorrect {
   color: #d32f2f;
   background-color: #E6BBB3;
@@ -278,7 +282,7 @@
 }
 
 .cell.same-row-col {
-  background-color: #f5f9ff;
+  background-color: #f5f9ffbf;
 }
 
 .cell.same-row-col:hover {
