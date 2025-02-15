@@ -102,7 +102,6 @@ const sudokuSlice = createSlice({
       const { row, col, value } = action.payload
       
       state.history.push(state.board.map(row => [...row]))
-      
       state.board[row][col] = value
       
       if (state.solution) {
@@ -111,10 +110,14 @@ const sudokuSlice = createSlice({
         state.isComplete = isFilled && !state.incorrectCells.some(row => row.some(cell => cell))
       }
       
-      // Get the initial board from localStorage to ensure we keep the original puzzle state
+      // Try to get initial board from localStorage first
       const savedGame = loadSavedGame()
       if (savedGame) {
         saveGameState(state, savedGame.initialBoard)
+      } else {
+        // If no saved game exists, use the current board as initial board
+        // This happens when the game is first launched
+        saveGameState(state, state.board.map(row => [...row]))
       }
     },
     undo: (state) => {
@@ -135,9 +138,11 @@ const sudokuSlice = createSlice({
       state.solution = action.payload.solution
       state.history = action.payload.history
       state.currentDifficulty = action.payload.difficulty
-      state.incorrectCells = validateBoard(state.board, state.solution || [])
-      state.isComplete = checkSolution(state.board) && 
-        !state.incorrectCells.some(row => row.some(cell => cell))
+      if (state.solution) {
+        state.incorrectCells = validateBoard(state.board, state.solution)
+        state.isComplete = checkSolution(state.board) && 
+          !state.incorrectCells.some(row => row.some(cell => cell))
+      }
     }
   },
   extraReducers: (builder) => {
@@ -159,10 +164,10 @@ const sudokuSlice = createSlice({
         state.history = []
         state.incorrectCells = Array(9).fill(null).map(() => Array(9).fill(false))
         state.selectedCell = null
-        state.currentDifficulty = action.meta.arg  // Save the difficulty
+        state.currentDifficulty = action.meta.arg
         
         // Save initial state with the initial grid
-        saveGameState(state, action.payload.grid)  // Save the original puzzle state
+        saveGameState(state, action.payload.initialBoard)  // Use initialBoard from payload
       })
       .addCase(fetchNewPuzzle.rejected, (state, action) => {
         state.loading = false

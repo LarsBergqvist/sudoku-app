@@ -19,6 +19,10 @@ const SudokuBoard = () => {
       setInitialBoard(savedGame.initialBoard)
     } else {
       dispatch(fetchNewPuzzle('Basic'))
+        .unwrap()
+        .then((payload) => {
+          setInitialBoard(payload.grid)
+        })
     }
   }, [dispatch])
 
