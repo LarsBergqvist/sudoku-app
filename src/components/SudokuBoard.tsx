@@ -1,24 +1,30 @@
 import { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
-import { fetchNewPuzzle, updateCell, undo, type Difficulty, selectCell } from '../store/sudokuSlice'
+import { fetchNewPuzzle, updateCell, undo, type Difficulty, selectCell, loadSavedGame, loadSavedGameState } from '../store/sudokuSlice'
 import NumberSelector from './NumberSelector'
 import './SudokuBoard.css'
 
 const SudokuBoard = () => {
   const dispatch = useAppDispatch()
-  const { board, loading, error, isComplete, history, incorrectCells, selectedCell } = useAppSelector((state) => state.sudoku)
+  const { board, loading, error, isComplete, history, incorrectCells, selectedCell, solution } = useAppSelector((state) => state.sudoku)
   const [selectorPosition, setSelectorPosition] = useState({ x: 0, y: 0 })
-  const [initialBoard, setInitialBoard] = useState<number[][]>([])
+  const [initialBoard, setInitialBoard] = useState<number[][]>(
+    Array(9).fill(null).map(() => Array(9).fill(0))
+  )
 
   useEffect(() => {
-    dispatch(fetchNewPuzzle('Basic'))
-  }, [dispatch])
-
-  useEffect(() => {
-    if (!loading && board.length > 0) {
-      setInitialBoard(board.map(row => [...row]))
+    const savedGame = loadSavedGame()
+    if (savedGame) {
+      dispatch(loadSavedGameState(savedGame))
+      setInitialBoard(savedGame.initialBoard)
+    } else {
+      dispatch(fetchNewPuzzle('Basic'))
+        .unwrap()
+        .then((payload) => {
+          setInitialBoard(payload.grid)
+        })
     }
-  }, [loading])
+  }, [dispatch])
 
   const handleCellClick = (row: number, col: number, event: React.MouseEvent<HTMLDivElement>) => {
     // If the cell is an initial value (not editable), deselect
@@ -65,7 +71,58 @@ const SudokuBoard = () => {
 
   const handleNewGame = (difficulty: Difficulty) => {
     dispatch(fetchNewPuzzle(difficulty))
+      .unwrap()
+      .then((payload) => {
+        setInitialBoard(payload.grid)
+      })
+      .catch((error) => {
+        console.error('Failed to start new game:', error)
+      })
   }
+
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (!selectedCell) return
+
+    const { row, col } = selectedCell
+
+    switch (e.key) {
+      case 'ArrowUp':
+        if (row > 0) dispatch(selectCell({ row: row - 1, col }))
+        break
+      case 'ArrowDown':
+        if (row < 8) dispatch(selectCell({ row: row + 1, col }))
+        break
+      case 'ArrowLeft':
+        if (col > 0) dispatch(selectCell({ row, col: col - 1 }))
+        break
+      case 'ArrowRight':
+        if (col < 8) dispatch(selectCell({ row, col: col + 1 }))
+        break
+      case '1':
+      case '2':
+      case '3':
+      case '4':
+      case '5':
+      case '6':
+      case '7':
+      case '8':
+      case '9':
+        handleNumberSelect(parseInt(e.key))
+        break
+      case 'Backspace':
+      case 'Delete':
+        handleNumberSelect(0)
+        break
+      case 'Escape':
+        dispatch(selectCell(null))
+        break
+    }
+  }
+
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [selectedCell])
 
   if (loading) {
     return <div>Loading puzzle...</div>
@@ -95,9 +152,11 @@ const SudokuBoard = () => {
                 <div
                   key={`${rowIndex}-${colIndex}`}
                   className={`cell 
-                    ${incorrectCells[rowIndex][colIndex] ? 'incorrect' : ''} 
-                    ${initialBoard[rowIndex]?.[colIndex] !== 0 ? 'initial' : ''}
-                    ${selectedCell?.row === rowIndex && selectedCell?.col === colIndex ? 'selected' : ''}`}
+                    ${incorrectCells[rowIndex][colIndex] ? 'incorrect' : ''}
+                    ${solution && board[rowIndex][colIndex] === solution[rowIndex][colIndex] && board[rowIndex][colIndex] !== 0 && !initialBoard[rowIndex][colIndex] ? 'correct' : ''}
+                    ${initialBoard[rowIndex][colIndex] !== 0 ? 'initial' : ''}
+                    ${selectedCell?.row === rowIndex && selectedCell?.col === colIndex ? 'selected' : ''}
+                    ${selectedCell && (selectedCell.row === rowIndex || selectedCell.col === colIndex) ? 'same-row-col' : ''}`}
                   onClick={(e) => handleCellClick(rowIndex, colIndex, e)}
                 >
                   {cell !== 0 && cell}

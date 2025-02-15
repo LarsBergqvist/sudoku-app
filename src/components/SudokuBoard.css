@@ -253,6 +253,10 @@
   }
 }
 
+.cell.correct {
+  background-color: #f0f0f0d3;
+}
+
 .cell.incorrect {
   color: #d32f2f;
   background-color: #E6BBB3;
@@ -277,7 +281,14 @@
   border: 2px solid #2196f3;
 }
 
-/* Optional: Add a lighter highlight for cells in the same row/column as selected */
 .cell.same-row-col {
-  background-color: #f5f9ff;
+  border: 2px solid #2196f3;
+}
+
+.cell.same-row-col:hover {
+  background-color: #C99B6D;
+}
+
+.cell.selected:hover {
+  background-color: #C99B6D;
 } 
