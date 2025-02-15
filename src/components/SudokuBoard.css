@@ -277,7 +277,14 @@
   border: 2px solid #2196f3;
 }
 
-/* Optional: Add a lighter highlight for cells in the same row/column as selected */
 .cell.same-row-col {
   background-color: #f5f9ff;
+}
+
+.cell.same-row-col:hover {
+  background-color: #C99B6D;
+}
+
+.cell.selected:hover {
+  background-color: #C99B6D;
 } 

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
-import { fetchNewPuzzle, updateCell, undo, type Difficulty, selectCell } from '../store/sudokuSlice'
+import { fetchNewPuzzle, updateCell, undo, type Difficulty, selectCell, loadSavedGame, loadSavedGameState } from '../store/sudokuSlice'
 import NumberSelector from './NumberSelector'
 import './SudokuBoard.css'
 
@@ -11,7 +11,13 @@ const SudokuBoard = () => {
   const [initialBoard, setInitialBoard] = useState<number[][]>([])
 
   useEffect(() => {
-    dispatch(fetchNewPuzzle('Basic'))
+    const savedGame = loadSavedGame()
+    if (savedGame) {
+      dispatch(loadSavedGameState(savedGame))
+      setInitialBoard(savedGame.initialBoard)
+    } else {
+      dispatch(fetchNewPuzzle('Basic'))
+    }
   }, [dispatch])
 
   useEffect(() => {

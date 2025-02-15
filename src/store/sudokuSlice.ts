@@ -13,6 +13,15 @@ interface SudokuState {
   history: number[][][]
   incorrectCells: boolean[][]  // Add this to track incorrect cells
   selectedCell: { row: number; col: number } | null  // Add this to track selected cell
+  currentDifficulty: Difficulty
+}
+
+interface SavedGameState {
+  board: number[][]
+  solution: number[][] | null
+  initialBoard: number[][]
+  history: number[][][]
+  difficulty: Difficulty
 }
 
 const initialState: SudokuState = {
@@ -23,7 +32,8 @@ const initialState: SudokuState = {
   isComplete: false,
   history: [],
   incorrectCells: Array(9).fill(null).map(() => Array(9).fill(false)),
-  selectedCell: null  // Initialize as null
+  selectedCell: null,
+  currentDifficulty: 'Basic'
 }
 
 const parseGridString = (gridString: string): number[][] => {
@@ -66,6 +76,22 @@ export const fetchNewPuzzle = createAsyncThunk(
   }
 )
 
+const saveGameState = (state: SudokuState, initialBoard: number[][]) => {
+  const savedState: SavedGameState = {
+    board: state.board,
+    solution: state.solution,
+    initialBoard,
+    history: state.history,
+    difficulty: state.currentDifficulty
+  }
+  localStorage.setItem('sudokuGameState', JSON.stringify(savedState))
+}
+
+export const loadSavedGame = (): SavedGameState | null => {
+  const saved = localStorage.getItem('sudokuGameState')
+  return saved ? JSON.parse(saved) : null
+}
+
 const sudokuSlice = createSlice({
   name: 'sudoku',
   initialState,
@@ -85,6 +111,9 @@ const sudokuSlice = createSlice({
         // Only set isComplete if board is filled and no cells are incorrect
         state.isComplete = isFilled && !state.incorrectCells.some(row => row.some(cell => cell))
       }
+      
+      // Save state after update
+      saveGameState(state, state.board)
     },
     undo: (state) => {
       if (state.history.length > 0) {
@@ -98,17 +127,27 @@ const sudokuSlice = createSlice({
     },
     selectCell: (state, action: PayloadAction<{ row: number; col: number } | null>) => {
       state.selectedCell = action.payload
+    },
+    loadSavedGameState: (state, action: PayloadAction<SavedGameState>) => {
+      state.board = action.payload.board
+      state.solution = action.payload.solution
+      state.history = action.payload.history
+      state.currentDifficulty = action.payload.difficulty
+      state.incorrectCells = validateBoard(state.board, state.solution || [])
+      state.isComplete = checkSolution(state.board) && 
+        !state.incorrectCells.some(row => row.some(cell => cell))
     }
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchNewPuzzle.pending, (state) => {
+      .addCase(fetchNewPuzzle.pending, (state, action) => {
         state.loading = true
         state.error = null
         state.isComplete = false
         state.history = []
         state.incorrectCells = Array(9).fill(null).map(() => Array(9).fill(false))
         state.selectedCell = null  // Reset selected cell
+        localStorage.removeItem('sudokuGameState') // Clear saved game when starting new
       })
       .addCase(fetchNewPuzzle.fulfilled, (state, action) => {
         state.loading = false
@@ -118,6 +157,9 @@ const sudokuSlice = createSlice({
         state.history = []
         state.incorrectCells = Array(9).fill(null).map(() => Array(9).fill(false))
         state.selectedCell = null  // Reset selected cell
+        
+        // Save initial state
+        saveGameState(state, action.payload.grid)
       })
       .addCase(fetchNewPuzzle.rejected, (state, action) => {
         state.loading = false
@@ -126,5 +168,5 @@ const sudokuSlice = createSlice({
   }
 })
 
-export const { updateCell, undo, selectCell } = sudokuSlice.actions
+export const { updateCell, undo, selectCell, loadSavedGameState } = sudokuSlice.actions
 export default sudokuSlice.reducer 
