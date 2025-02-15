@@ -67,11 +67,12 @@ const SudokuBoard = () => {
 
   const handleNewGame = (difficulty: Difficulty) => {
     dispatch(fetchNewPuzzle(difficulty))
-      .then((action) => {
-        if (action.payload) {
-          // @ts-ignore - we know the payload shape includes initialBoard
-          setInitialBoard(action.payload.initialBoard)
-        }
+      .unwrap()
+      .then((payload) => {
+        setInitialBoard(payload.grid)
+      })
+      .catch((error) => {
+        console.error('Failed to start new game:', error)
       })
   }
 

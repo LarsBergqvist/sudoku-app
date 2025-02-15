@@ -82,7 +82,7 @@ const saveGameState = (state: SudokuState, initialBoard: number[][]) => {
   const savedState: SavedGameState = {
     board: state.board,
     solution: state.solution,
-    initialBoard,
+    initialBoard: initialBoard,
     history: state.history,
     difficulty: state.currentDifficulty
   }
@@ -106,16 +106,16 @@ const sudokuSlice = createSlice({
       state.board[row][col] = value
       
       if (state.solution) {
-        // Update incorrect cells
         state.incorrectCells = validateBoard(state.board, state.solution)
-        // Check if board is complete (no empty cells)
         const isFilled = checkSolution(state.board)
-        // Only set isComplete if board is filled and no cells are incorrect
         state.isComplete = isFilled && !state.incorrectCells.some(row => row.some(cell => cell))
       }
       
-      // Save state after update
-      saveGameState(state, state.board)
+      // Get the initial board from localStorage to ensure we keep the original puzzle state
+      const savedGame = loadSavedGame()
+      if (savedGame) {
+        saveGameState(state, savedGame.initialBoard)
+      }
     },
     undo: (state) => {
       if (state.history.length > 0) {
@@ -159,9 +159,10 @@ const sudokuSlice = createSlice({
         state.history = []
         state.incorrectCells = Array(9).fill(null).map(() => Array(9).fill(false))
         state.selectedCell = null
+        state.currentDifficulty = action.meta.arg  // Save the difficulty
         
-        // Save initial state with initialBoard
-        saveGameState(state, action.payload.initialBoard)
+        // Save initial state with the initial grid
+        saveGameState(state, action.payload.grid)  // Save the original puzzle state
       })
       .addCase(fetchNewPuzzle.rejected, (state, action) => {
         state.loading = false
