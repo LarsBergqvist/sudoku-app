@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { API_URL } from '../config'
+import { mockSudokuData, SudokuResponse } from '../mocks/sudokuData'
 
 export type Difficulty = 'Basic' | 'Hard' | 'VeryHard'
 
@@ -63,14 +64,29 @@ const validateBoard = (board: number[][], solution: number[][]): boolean[][] => 
   )
 }
 
+const USE_MOCK_API = import.meta.env.VITE_USE_MOCK_API === 'true'
+
 export const fetchNewPuzzle = createAsyncThunk(
   'sudoku/fetchNewPuzzle',
   async (difficulty: Difficulty) => {
-    const response = await fetch(`${API_URL}/api/Sudoku?difficulty=${difficulty}`)
-    if (!response.ok) {
-      throw new Error('Failed to fetch puzzle')
+    let data: SudokuResponse
+
+    if (USE_MOCK_API) {
+      // Use mock data
+      const mockPuzzle = mockSudokuData.find(puzzle => puzzle.difficulty === difficulty)
+      if (!mockPuzzle) {
+        throw new Error(`No mock puzzle found for difficulty: ${difficulty}`)
+      }
+      data = mockPuzzle
+    } else {
+      // Use real API
+      const response = await fetch(`${API_URL}/api/Sudoku?difficulty=${difficulty}`)
+      if (!response.ok) {
+        throw new Error('Failed to fetch puzzle')
+      }
+      data = await response.json()
     }
-    const data = await response.json()
+
     const grid = parseGridString(data.grid)
     return {
       grid,
