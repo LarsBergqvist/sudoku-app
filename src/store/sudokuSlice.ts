@@ -93,10 +93,16 @@ export const fetchNewPuzzle = createAsyncThunk(
 
     try {
       if (USE_MOCK_API) {
-        const mockPuzzle = mockSudokuData.find(puzzle => puzzle.difficulty === difficulty)
-        if (!mockPuzzle) {
+        // Filter puzzles by difficulty
+        const puzzles = mockSudokuData.filter(puzzle => puzzle.difficulty === difficulty)
+        if (puzzles.length === 0) {
           throw new Error(`No mock puzzle found for difficulty: ${difficulty}`)
         }
+        
+        // Select a random puzzle
+        const randomIndex = Math.floor(Math.random() * puzzles.length)
+        const mockPuzzle = puzzles[randomIndex]
+        
         if (!mockPuzzle.grid || !mockPuzzle.solution) {
           throw new Error('Mock puzzle data is incomplete')
         }
