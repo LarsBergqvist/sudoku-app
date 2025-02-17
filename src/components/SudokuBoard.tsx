@@ -29,8 +29,8 @@ const SudokuBoard = () => {
   }, [dispatch])
 
   const handleCellClick = (row: number, col: number, event: React.MouseEvent<HTMLDivElement>) => {
-    // If the cell is an initial value (not editable), deselect
-    if (initialBoard[row]?.[col] !== 0) {
+    // Check if initialBoard is defined and the cell is not editable
+    if (initialBoard && initialBoard[row]?.[col] !== 0) {
       dispatch(selectCell(null))
       return
     }
@@ -149,7 +149,7 @@ const SudokuBoard = () => {
                   className={`cell 
                     ${showingIncorrect && incorrectCells[rowIndex][colIndex] ? 'incorrect' : ''}
                     ${board[rowIndex][colIndex] !== 0 ? 'entered' : ''}
-                    ${initialBoard[rowIndex][colIndex] !== 0 ? 'initial' : ''}
+                    ${initialBoard && initialBoard[rowIndex][colIndex] !== 0 ? 'initial' : ''}
                     ${selectedCell?.row === rowIndex && selectedCell?.col === colIndex ? 'selected' : ''}
                     `}
                   onClick={(e) => handleCellClick(rowIndex, colIndex, e)}
