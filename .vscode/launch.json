@@ -16,9 +16,42 @@
             "request": "launch",
             "name": "Debug Vite Dev Server",
             "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/vite",
-            "runtimeArgs": ["--debug"],
+            "runtimeArgs": [
+                "--debug"
+            ],
             "skipFiles": [
                 "<node_internals>/**"
+            ]
+        },
+        {
+            "name": "Launch Firefox against localhost",
+            "type": "firefox",
+            "request": "launch",
+            "reAttach": true,
+            "url": "http://localhost:5173",
+            "webRoot": "${workspaceFolder}",
+            "pathMappings": [
+                {
+                    "url": "http://localhost:5173/sudoku-app/src",
+                    "path": "${workspaceFolder}/src"
+                },
+                {
+                    "url": "http://localhost:5173/src",
+                    "path": "${workspaceFolder}/src"
+                }
+            ]
+        },
+        {
+            "name": "Attach to Firefox",
+            "type": "firefox",
+            "request": "attach",
+            "url": "http://localhost:5173",
+            "webRoot": "${workspaceFolder}",
+            "pathMappings": [
+                {
+                    "url": "http://localhost:5173/src",
+                    "path": "${workspaceFolder}/src"
+                }
             ]
         }
     ],

@@ -1,6 +1,14 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { API_URL } from '../config'
+import { mockSudokuData, SudokuResponse } from '../mocks/sudokuData'
+
+// Create a function to check the environment
+const getUseMockApi = () => {
+  const useMockApi = import.meta.env.VITE_USE_MOCK_API === 'true'
+  console.log('Environment check - USE_MOCK_API:', useMockApi)
+  return useMockApi
+}
 
 export type Difficulty = 'Basic' | 'Hard' | 'VeryHard'
 
@@ -15,6 +23,7 @@ interface SudokuState {
   selectedCell: { row: number; col: number } | null
   currentDifficulty: Difficulty
   showingIncorrect: boolean
+  initialBoard: number[][]
 }
 
 interface SavedGameState {
@@ -35,19 +44,31 @@ const initialState: SudokuState = {
   incorrectCells: Array(9).fill(null).map(() => Array(9).fill(false)),
   selectedCell: null,
   currentDifficulty: 'Basic',
-  showingIncorrect: false
+  showingIncorrect: false,
+  initialBoard: Array(9).fill(null).map(() => Array(9).fill(0))
 }
 
 const parseGridString = (gridString: string): number[][] => {
+  if (!gridString || typeof gridString !== 'string' || gridString.length !== 81) {
+    console.error('Invalid grid string:', gridString)
+    throw new Error('Invalid grid string format')
+  }
+
   const grid: number[][] = []
   for (let i = 0; i < 9; i++) {
     const row: number[] = []
     for (let j = 0; j < 9; j++) {
       const char = gridString[i * 9 + j]
-      row.push(char === ' ' || char === '.' ? 0 : parseInt(char))
+      const value = char === ' ' || char === '.' ? 0 : parseInt(char)
+      if (isNaN(value)) {
+        console.error('Invalid character in grid string:', char)
+        throw new Error('Invalid character in grid string')
+      }
+      row.push(value)
     }
     grid.push(row)
   }
+
   return grid
 }
 
@@ -66,19 +87,106 @@ const validateBoard = (board: number[][], solution: number[][]): boolean[][] => 
 export const fetchNewPuzzle = createAsyncThunk(
   'sudoku/fetchNewPuzzle',
   async (difficulty: Difficulty) => {
-    const response = await fetch(`${API_URL}/api/Sudoku?difficulty=${difficulty}`)
-    if (!response.ok) {
-      throw new Error('Failed to fetch puzzle')
-    }
-    const data = await response.json()
-    const grid = parseGridString(data.grid)
-    return {
-      grid,
-      solution: parseGridString(data.solution),
-      initialBoard: grid.map(row => [...row])
+    let data: SudokuResponse
+    console.log('Fetching new puzzle with difficulty:', difficulty)
+    const USE_MOCK_API = getUseMockApi()
+
+    try {
+      if (USE_MOCK_API) {
+        // Filter puzzles by difficulty
+        const puzzles = mockSudokuData.filter(puzzle => puzzle.difficulty === difficulty)
+        if (puzzles.length === 0) {
+          throw new Error(`No mock puzzle found for difficulty: ${difficulty}`)
+        }
+        
+        // Select a random puzzle
+        const randomIndex = Math.floor(Math.random() * puzzles.length)
+        const mockPuzzle = puzzles[randomIndex]
+        
+        if (!mockPuzzle.grid || !mockPuzzle.solution) {
+          throw new Error('Mock puzzle data is incomplete')
+        }
+        data = mockPuzzle
+      } else {
+        const response = await fetch(`${API_URL}/api/Sudoku?difficulty=${difficulty}`)
+        if (!response.ok) {
+          throw new Error('Failed to fetch puzzle')
+        }
+        data = await response.json()
+        if (!data.grid || !data.solution) {
+          throw new Error('API response is incomplete')
+        }
+      }
+
+      // Parse grid and create a deep copy for initialBoard immediately
+      const grid = parseGridString(data.grid)
+      const initialBoard = JSON.parse(JSON.stringify(grid)) // Ensure deep copy
+      const solution = parseGridString(data.solution)
+
+      // Validate all required data
+      if (!Array.isArray(grid) || grid.length !== 9 || grid.some(row => !Array.isArray(row) || row.length !== 9)) {
+        console.error('Invalid grid structure:', grid)
+        throw new Error('Invalid grid structure after parsing')
+      }
+
+      if (!Array.isArray(solution) || solution.length !== 9 || solution.some(row => !Array.isArray(row) || row.length !== 9)) {
+        console.error('Invalid solution structure:', solution)
+        throw new Error('Invalid solution structure after parsing')
+      }
+
+      if (!Array.isArray(initialBoard) || initialBoard.length !== 9 || initialBoard.some(row => !Array.isArray(row) || row.length !== 9)) {
+        console.error('Invalid initialBoard structure:', initialBoard)
+        throw new Error('Invalid initialBoard structure after creation')
+      }
+
+      // Create the result object
+      const result = {
+        grid,
+        solution,
+        initialBoard
+      }
+
+      // Validate the complete result object
+      if (!result.grid || !result.solution || !result.initialBoard) {
+        console.error('Invalid result object:', result)
+        throw new Error('Result object is incomplete')
+      }
+
+      // Debug logging
+      console.log('Puzzle data:', {
+        gridLength: grid.length,
+        solutionLength: solution.length,
+        initialBoardLength: initialBoard.length,
+        difficulty
+      })
+
+      return result
+    } catch (error) {
+      console.error('Error in fetchNewPuzzle:', error)
+      throw error
     }
   }
 )
+
+// Move validation to be called when needed
+const validateMockData = () => {
+  const USE_MOCK_API = getUseMockApi()
+  if (USE_MOCK_API) {
+    mockSudokuData.forEach((puzzle, index) => {
+      if (!puzzle.grid || !puzzle.solution || !puzzle.difficulty) {
+        console.error(`Invalid mock puzzle data at index ${index}:`, puzzle)
+        throw new Error('Invalid mock puzzle data')
+      }
+      if (puzzle.grid.length !== 81 || puzzle.solution.length !== 81) {
+        console.error(`Invalid puzzle length at index ${index}:`, puzzle)
+        throw new Error('Mock puzzle grid or solution has incorrect length')
+      }
+    })
+  }
+}
+
+// Call validation after store initialization
+validateMockData()
 
 const saveGameState = (state: SudokuState, initialBoard: number[][]) => {
   const savedState: SavedGameState = {
@@ -140,6 +248,7 @@ const sudokuSlice = createSlice({
       state.solution = action.payload.solution
       state.history = action.payload.history
       state.currentDifficulty = action.payload.difficulty
+      state.initialBoard = action.payload.initialBoard
       if (state.solution) {
         state.incorrectCells = validateBoard(state.board, state.solution)
         state.isComplete = checkSolution(state.board) && 
@@ -159,20 +268,22 @@ const sudokuSlice = createSlice({
         state.history = []
         state.incorrectCells = Array(9).fill(null).map(() => Array(9).fill(false))
         state.selectedCell = null
+        state.initialBoard = Array(9).fill(null).map(() => Array(9).fill(0))
         localStorage.removeItem('sudokuGameState')
       })
       .addCase(fetchNewPuzzle.fulfilled, (state, action) => {
         state.loading = false
         state.board = action.payload.grid
         state.solution = action.payload.solution
+        state.initialBoard = action.payload.initialBoard
         state.isComplete = false
         state.history = []
         state.incorrectCells = Array(9).fill(null).map(() => Array(9).fill(false))
         state.selectedCell = null
         state.currentDifficulty = action.meta.arg
         
-        // Save initial state with the initial grid
-        saveGameState(state, action.payload.initialBoard)  // Use initialBoard from payload
+        // Save initial state
+        saveGameState(state, state.initialBoard)
       })
       .addCase(fetchNewPuzzle.rejected, (state, action) => {
         state.loading = false

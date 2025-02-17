@@ -17,27 +17,20 @@ const SudokuBoard = () => {
     showingIncorrect 
   } = useAppSelector((state) => state.sudoku)
   const [selectorPosition, setSelectorPosition] = useState({ x: 0, y: 0 })
-  const [initialBoard, setInitialBoard] = useState<number[][]>(
-    Array(9).fill(null).map(() => Array(9).fill(0))
-  )
+  const initialBoard = useAppSelector((state) => state.sudoku.initialBoard)
 
   useEffect(() => {
     const savedGame = loadSavedGame()
     if (savedGame) {
       dispatch(loadSavedGameState(savedGame))
-      setInitialBoard(savedGame.initialBoard)
     } else {
       dispatch(fetchNewPuzzle('Basic'))
-        .unwrap()
-        .then((payload) => {
-          setInitialBoard(payload.grid)
-        })
     }
   }, [dispatch])
 
   const handleCellClick = (row: number, col: number, event: React.MouseEvent<HTMLDivElement>) => {
-    // If the cell is an initial value (not editable), deselect
-    if (initialBoard[row]?.[col] !== 0) {
+    // Check if initialBoard is defined and the cell is not editable
+    if (initialBoard && initialBoard[row]?.[col] !== 0) {
       dispatch(selectCell(null))
       return
     }
@@ -80,13 +73,6 @@ const SudokuBoard = () => {
 
   const handleNewGame = (difficulty: Difficulty) => {
     dispatch(fetchNewPuzzle(difficulty))
-      .unwrap()
-      .then((payload) => {
-        setInitialBoard(payload.grid)
-      })
-      .catch((error) => {
-        console.error('Failed to start new game:', error)
-      })
   }
 
   const handleKeyDown = (e: KeyboardEvent) => {
@@ -163,7 +149,7 @@ const SudokuBoard = () => {
                   className={`cell 
                     ${showingIncorrect && incorrectCells[rowIndex][colIndex] ? 'incorrect' : ''}
                     ${board[rowIndex][colIndex] !== 0 ? 'entered' : ''}
-                    ${initialBoard[rowIndex][colIndex] !== 0 ? 'initial' : ''}
+                    ${initialBoard && initialBoard[rowIndex][colIndex] !== 0 ? 'initial' : ''}
                     ${selectedCell?.row === rowIndex && selectedCell?.col === colIndex ? 'selected' : ''}
                     `}
                   onClick={(e) => handleCellClick(rowIndex, colIndex, e)}
