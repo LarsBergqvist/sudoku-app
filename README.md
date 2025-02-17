@@ -30,7 +30,7 @@ dotnet run --project ./Sudoku.Web/Sudoku.Web.csproj
 Then, modify `.env.development` in the sudoku-app project to point to the local API and set VITE_USE_MOCK_API to false.
 
 ```bash
-VITE_USE_MOCK_API=true
+VITE_USE_MOCK_API=false
 VITE_API_URL='http://localhost:5000'
 ```
 
