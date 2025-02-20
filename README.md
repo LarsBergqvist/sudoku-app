@@ -18,7 +18,7 @@ By default, the app uses a mock API to fetch a random sudoku puzzle with a speci
 
 ## Use the real API
 
-To use the real API, you need to clone the sudoku-puzzler api (C#, NET8) and run it locally:
+To use the real API that generates new random puzzles for every request, you need to clone the sudoku-puzzler api (C#, NET8) and run it locally:
 
 ```bash
 git clone https://github.com/LarsBergqvist/sudoku-puzzler.git
