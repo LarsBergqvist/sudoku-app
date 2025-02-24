@@ -1,11 +1,11 @@
 import './App.css'
-import SudokuBoard from './components/SudokuBoard'
+import SudokuGame from './components/SudokuGame'
 
 function App() {
   return (
     <div className="App">
       <h1>Sudoku Game</h1>
-      <SudokuBoard />
+      <SudokuGame />
     </div>
   )
 }
