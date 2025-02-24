@@ -83,53 +83,6 @@
   box-sizing: border-box;
 }
 
-.difficulty-buttons {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.new-game-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.3s;
-  color: #fff;
-  text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
-  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-  border: 2px solid rgba(0,0,0,0.1);
-}
-
-.new-game-button.basic {
-  background: linear-gradient(145deg, #7E9E7E, #5C8A5C);
-}
-
-.new-game-button.basic:hover {
-  background: linear-gradient(145deg, #8CAE8C, #6A986A);
-}
-
-.new-game-button.hard {
-  background: linear-gradient(145deg, #C17817, #A65D00);
-}
-
-.new-game-button.hard:hover {
-  background: linear-gradient(145deg, #D18827, #B66D10);
-}
-
-.new-game-button.very-hard {
-  background: linear-gradient(145deg, #8B4513, #723810);
-}
-
-.new-game-button.very-hard:hover {
-  background: linear-gradient(145deg, #9B5523, #824920);
-}
-
-.new-game-button:active {
-  transform: scale(0.98);
-}
-
 .victory-message {
   background-color: #4CAF50;
   color: white;
@@ -155,67 +108,6 @@
   }
 }
 
-.game-controls {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  margin-top: 20px;
-}
-
-.button-row {
-  display: flex;
-  gap: 10px;
-}
-
-.undo-button {
-  padding: 8px 16px;
-  font-size: 16px;
-  background: linear-gradient(145deg, #8B6B4F, #725544);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
-  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-  border: 2px solid rgba(0,0,0,0.1);
-}
-
-.undo-button:hover:not(:disabled) {
-  background: linear-gradient(145deg, #9B7B5F, #826554);
-}
-
-.undo-button:disabled {
-  background: linear-gradient(145deg, #AAA, #999);
-  cursor: not-allowed;
-  opacity: 0.7;
-}
-
-.undo-button:active:not(:disabled) {
-  transform: scale(0.98);
-}
-
-.show-incorrect-button {
-  padding: 8px 16px;
-  font-size: 16px;
-  background: linear-gradient(145deg, #8B6B4F, #725544);
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
-  box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-  border: 2px solid rgba(0,0,0,0.1);
-  user-select: none;
-  touch-action: manipulation;
-}
-
-.show-incorrect-button:active {
-  background: linear-gradient(145deg, #725544, #8B6B4F);
-  transform: scale(0.98);
-}
 
 @media (max-width: 480px) {
   .cell {
@@ -229,18 +121,6 @@
     border-width: 4px;
   }
 
-  .difficulty-buttons {
-    flex-direction: column;
-    gap: 5px;
-    width: 100%;
-    max-width: 280px;
-  }
-
-  .new-game-button {
-    width: 100%;
-    padding: 8px 16px;
-    font-size: 14px;
-  }
 
   .sudoku-container {
     padding: 8px;
@@ -248,11 +128,6 @@
     max-width: 100%;
     margin: 0 auto;
     gap: 12px;
-  }
-
-  .game-controls {
-    margin-top: 12px;
-    gap: 8px;
   }
 }
 
@@ -271,11 +146,6 @@
   .sudoku-container {
     padding: 5px;
     gap: 8px;
-  }
-
-  .game-controls {
-    margin-top: 8px;
-    gap: 5px;
   }
 }
 
