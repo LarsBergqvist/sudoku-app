@@ -1,20 +1,12 @@
 import { useCallback } from 'react'
-import { Dispatch } from 'redux'
+import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { selectCell, updateCell } from '../store/sudokuSlice'
 
-interface UseSudokuInteractionsProps {
-  initialBoard: number[][] | undefined
-  selectedCell: { row: number, col: number } | null
-  dispatch: Dispatch
-  setSelectorPosition: (position: { x: number, y: number }) => void
-}
+const useSudokuInteractions = (setSelectorPosition: (position: { x: number, y: number }) => void) => {
+  const dispatch = useAppDispatch()
+  const initialBoard = useAppSelector((state) => state.sudoku.initialBoard)
+  const selectedCell = useAppSelector((state) => state.sudoku.selectedCell)
 
-const useSudokuInteractions = ({
-  initialBoard,
-  selectedCell,
-  dispatch,
-  setSelectorPosition
-}: UseSudokuInteractionsProps) => {
   const handleCellClick = useCallback(
     (row: number, col: number, event: React.MouseEvent<HTMLDivElement>) => {
       if (initialBoard && initialBoard[row]?.[col] !== 0) {

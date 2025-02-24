@@ -25,12 +25,7 @@ const SudokuBoard = () => {
     handleBoardClick,
     handleNumberSelect,
     handleKeyDown
-  } = useSudokuInteractions({
-    initialBoard,
-    selectedCell,
-    dispatch,
-    setSelectorPosition
-  })
+  } = useSudokuInteractions(setSelectorPosition)
 
   useEffect(() => {
     const savedGame = loadSavedGame()
