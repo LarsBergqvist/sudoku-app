@@ -3,10 +3,10 @@ import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { fetchNewPuzzle, selectCell, loadSavedGame, loadSavedGameState } from '../store/sudokuSlice'
 import NumberSelector from './NumberSelector'
 import GameControls from './GameControls'
-import './SudokuBoard.css'
+import './SudokuGame.css'
 import useSudokuInteractions from '../hooks/useSudokuInteractions'
 
-const SudokuBoard = () => {
+const SudokuGame = () => {
   const dispatch = useAppDispatch()
   const { 
     board, 
@@ -95,4 +95,4 @@ const SudokuBoard = () => {
   )
 }
 
-export default SudokuBoard 
+export default SudokuGame 
