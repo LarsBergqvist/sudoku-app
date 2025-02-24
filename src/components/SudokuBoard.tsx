@@ -5,18 +5,14 @@ import NumberSelector from './NumberSelector'
 import './SudokuBoard.css'
 import useSudokuInteractions from '../hooks/useSudokuInteractions'
 
-interface SudokuBoardProps {
-  selectorPosition: { x: number, y: number }
-  setSelectorPosition: (position: { x: number, y: number }) => void
-}
-
-const SudokuBoard: React.FC<SudokuBoardProps> = ({ selectorPosition, setSelectorPosition }) => {
+const SudokuBoard: React.FC = () => {
   const dispatch = useAppDispatch()
   const { 
     board, 
     incorrectCells, 
     selectedCell, 
-    showingIncorrect 
+    showingIncorrect,
+    selectorPosition
   } = useAppSelector((state) => state.sudoku)
   const initialBoard = useAppSelector((state) => state.sudoku.initialBoard)
 
@@ -24,7 +20,7 @@ const SudokuBoard: React.FC<SudokuBoardProps> = ({ selectorPosition, setSelector
     handleCellClick,
     handleBoardClick,
     handleNumberSelect
-  } = useSudokuInteractions(setSelectorPosition)
+  } = useSudokuInteractions()
 
   return (
     <div className="sudoku-board">

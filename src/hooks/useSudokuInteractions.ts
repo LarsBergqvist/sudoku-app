@@ -1,8 +1,8 @@
 import { useCallback } from 'react'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
-import { selectCell, updateCell } from '../store/sudokuSlice'
+import { selectCell, updateCell, setSelectorPosition } from '../store/sudokuSlice'
 
-const useSudokuInteractions = (setSelectorPosition: (position: { x: number, y: number }) => void) => {
+const useSudokuInteractions = () => {
   const dispatch = useAppDispatch()
   const initialBoard = useAppSelector((state) => state.sudoku.initialBoard)
   const selectedCell = useAppSelector((state) => state.sudoku.selectedCell)
@@ -16,10 +16,10 @@ const useSudokuInteractions = (setSelectorPosition: (position: { x: number, y: n
 
       const cellElement = event.currentTarget
       const rect = cellElement.getBoundingClientRect()
-      setSelectorPosition({
+      dispatch(setSelectorPosition({
         x: rect.left + rect.width / 2,
         y: rect.top + rect.height / 2
-      })
+      }))
 
       if (selectedCell?.row === row && selectedCell?.col === col) {
         dispatch(selectCell(null))
@@ -27,7 +27,7 @@ const useSudokuInteractions = (setSelectorPosition: (position: { x: number, y: n
         dispatch(selectCell({ row, col }))
       }
     },
-    [initialBoard, selectedCell, dispatch, setSelectorPosition]
+    [initialBoard, selectedCell, dispatch]
   )
 
   const handleBoardClick = useCallback(

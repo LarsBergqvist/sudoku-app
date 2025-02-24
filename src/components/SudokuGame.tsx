@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
 import { fetchNewPuzzle, loadSavedGame, loadSavedGameState } from '../store/sudokuSlice'
 import SudokuBoard from './SudokuBoard'
@@ -13,11 +13,10 @@ const SudokuGame = () => {
     error, 
     isComplete, 
   } = useAppSelector((state) => state.sudoku)
-  const [selectorPosition, setSelectorPosition] = useState({ x: 0, y: 0 })
 
   const {
     handleKeyDown
-  } = useSudokuInteractions(setSelectorPosition)
+  } = useSudokuInteractions()
 
   useEffect(() => {
     const savedGame = loadSavedGame()
@@ -53,7 +52,7 @@ const SudokuGame = () => {
           🎉 Congratulations! You've solved the puzzle! 🎉
         </div>
       )}
-      <SudokuBoard selectorPosition={selectorPosition} setSelectorPosition={setSelectorPosition} />
+      <SudokuBoard />
       <GameControls />
     </div>
   )

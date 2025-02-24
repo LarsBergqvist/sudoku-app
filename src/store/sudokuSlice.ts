@@ -24,6 +24,7 @@ interface SudokuState {
   currentDifficulty: Difficulty
   showingIncorrect: boolean
   initialBoard: number[][]
+  selectorPosition: { x: number, y: number }
 }
 
 interface SavedGameState {
@@ -45,7 +46,8 @@ const initialState: SudokuState = {
   selectedCell: null,
   currentDifficulty: 'Basic',
   showingIncorrect: false,
-  initialBoard: Array(9).fill(null).map(() => Array(9).fill(0))
+  initialBoard: Array(9).fill(null).map(() => Array(9).fill(0)),
+  selectorPosition: { x: 0, y: 0 }
 }
 
 const parseGridString = (gridString: string): number[][] => {
@@ -257,6 +259,9 @@ const sudokuSlice = createSlice({
     },
     setShowingIncorrect: (state, action: PayloadAction<boolean>) => {
       state.showingIncorrect = action.payload
+    },
+    setSelectorPosition(state, action: PayloadAction<{ x: number, y: number }>) {
+      state.selectorPosition = action.payload
     }
   },
   extraReducers: (builder) => {
@@ -292,5 +297,5 @@ const sudokuSlice = createSlice({
   }
 })
 
-export const { updateCell, undo, selectCell, loadSavedGameState, setShowingIncorrect } = sudokuSlice.actions
+export const { updateCell, undo, selectCell, loadSavedGameState, setShowingIncorrect, setSelectorPosition } = sudokuSlice.actions
 export default sudokuSlice.reducer 
