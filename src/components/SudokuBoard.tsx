@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
-import { fetchNewPuzzle, updateCell, selectCell, loadSavedGame, loadSavedGameState } from '../store/sudokuSlice'
+import { fetchNewPuzzle, selectCell, loadSavedGame, loadSavedGameState } from '../store/sudokuSlice'
 import NumberSelector from './NumberSelector'
 import GameControls from './GameControls'
 import './SudokuBoard.css'
+import { handleCellClick, handleBoardClick, handleNumberSelect, handleKeyDown } from './UserInteractionHandlers'
 
 const SudokuBoard = () => {
   const dispatch = useAppDispatch()
@@ -28,92 +29,11 @@ const SudokuBoard = () => {
     }
   }, [dispatch])
 
-  const handleCellClick = (row: number, col: number, event: React.MouseEvent<HTMLDivElement>) => {
-    // Check if initialBoard is defined and the cell is not editable
-    if (initialBoard && initialBoard[row]?.[col] !== 0) {
-      dispatch(selectCell(null))
-      return
-    }
-
-    // Get the position of the clicked cell for the number selector
-    const cellElement = event.currentTarget
-    const rect = cellElement.getBoundingClientRect()
-    setSelectorPosition({
-      x: rect.left + rect.width / 2,
-      y: rect.top + rect.height / 2
-    })
-
-    // If clicking the same cell that's already selected, deselect it
-    if (selectedCell?.row === row && selectedCell?.col === col) {
-      dispatch(selectCell(null))
-    } else {
-      // Otherwise, select the new cell
-      dispatch(selectCell({ row, col }))
-    }
-  }
-
-  const handleBoardClick = (e: React.MouseEvent) => {
-    // If clicking outside the cells (on the board background),
-    // deselect the current cell
-    if ((e.target as HTMLElement).classList.contains('board-background')) {
-      dispatch(selectCell(null))
-    }
-  }
-
-  const handleNumberSelect = (value: number) => {
-    if (selectedCell) {
-      dispatch(updateCell({ 
-        row: selectedCell.row, 
-        col: selectedCell.col, 
-        value 
-      }))
-    }
-    dispatch(selectCell(null))
-  }
-
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (!selectedCell) return
-
-    const { row, col } = selectedCell
-
-    switch (e.key) {
-      case 'ArrowUp':
-        if (row > 0) dispatch(selectCell({ row: row - 1, col }))
-        break
-      case 'ArrowDown':
-        if (row < 8) dispatch(selectCell({ row: row + 1, col }))
-        break
-      case 'ArrowLeft':
-        if (col > 0) dispatch(selectCell({ row, col: col - 1 }))
-        break
-      case 'ArrowRight':
-        if (col < 8) dispatch(selectCell({ row, col: col + 1 }))
-        break
-      case '1':
-      case '2':
-      case '3':
-      case '4':
-      case '5':
-      case '6':
-      case '7':
-      case '8':
-      case '9':
-        handleNumberSelect(parseInt(e.key))
-        break
-      case 'Backspace':
-      case 'Delete':
-        handleNumberSelect(0)
-        break
-      case 'Escape':
-        dispatch(selectCell(null))
-        break
-    }
-  }
-
   useEffect(() => {
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [selectedCell])
+    const keyDownHandler = (e: KeyboardEvent) => handleKeyDown(e, selectedCell, dispatch)
+    window.addEventListener('keydown', keyDownHandler)
+    return () => window.removeEventListener('keydown', keyDownHandler)
+  }, [selectedCell, dispatch])
 
   if (loading) {
     return <div>Loading puzzle...</div>
@@ -136,7 +56,7 @@ const SudokuBoard = () => {
         </div>
       )}
       <div className="sudoku-board">
-        <div className="board-background" onClick={handleBoardClick}>
+        <div className="board-background" onClick={(e) => handleBoardClick(e, dispatch)}>
           {board.map((row, rowIndex) => (
             <div key={rowIndex} className="row">
               {row.map((cell, colIndex) => (
@@ -148,7 +68,7 @@ const SudokuBoard = () => {
                     ${initialBoard && initialBoard[rowIndex][colIndex] !== 0 ? 'initial' : ''}
                     ${selectedCell?.row === rowIndex && selectedCell?.col === colIndex ? 'selected' : ''}
                     `}
-                  onClick={(e) => handleCellClick(rowIndex, colIndex, e)}
+                  onClick={(e) => handleCellClick(rowIndex, colIndex, e, initialBoard, selectedCell, dispatch, setSelectorPosition)}
                 >
                   {cell !== 0 && cell}
                 </div>
@@ -160,7 +80,7 @@ const SudokuBoard = () => {
       {selectedCell && (
         <NumberSelector
           position={selectorPosition}
-          onSelect={handleNumberSelect}
+          onSelect={(value) => handleNumberSelect(value, selectedCell, dispatch)}
           onClose={() => dispatch(selectCell(null))}
         />
       )}
