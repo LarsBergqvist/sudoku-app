@@ -1,0 +1,70 @@
+.sudoku-board {
+    display: inline-block;
+    padding: 10px;
+    background: linear-gradient(45deg, #8B4513, #A0522D);
+    border: 8px solid #5D4037;
+    border-radius: 8px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+    position: relative;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .sudoku-board::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  
+    pointer-events: none;
+  }
+  
+  .row {
+    display: flex;
+  }
+  
+  .cell {
+    width: clamp(25px, 11vw, 40px);
+    height: clamp(25px, 11vw, 40px);
+    border: 1px solid rgba(0,0,0,0.2);
+    text-align: center;
+    font-size: clamp(14px, 5vw, 20px);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    user-select: none;
+    background: #DEB887;
+    color: #2d1810;
+    font-weight: bold;
+    transition: all 0.2s ease;
+    text-shadow: 1px 1px 1px rgba(255,255,255,0.2);
+    box-sizing: border-box;
+  }
+  
+  .cell:hover {
+    background-color: #E8C39E;
+  }
+  
+  .cell:active {
+    background-color: #D4A676;
+  }
+  
+  .cell:nth-child(3n) {
+    border-right: 3px solid #5D4037;
+  }
+  
+  .row:nth-child(3n) .cell {
+    border-bottom: 3px solid #5D4037;
+  }
+  
+  .cell:focus {
+    background-color: #E8C39E;
+    outline: none;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.3);
+  }
+  
