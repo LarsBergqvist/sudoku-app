@@ -154,14 +154,6 @@ export const fetchNewPuzzle = createAsyncThunk(
         throw new Error('Result object is incomplete')
       }
 
-      // Debug logging
-      console.log('Puzzle data:', {
-        gridLength: grid.length,
-        solutionLength: solution.length,
-        initialBoardLength: initialBoard.length,
-        difficulty
-      })
-
       return result
     } catch (error) {
       console.error('Error in fetchNewPuzzle:', error)
