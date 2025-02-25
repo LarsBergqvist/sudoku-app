@@ -1,5 +1,6 @@
 import { useAppDispatch, useAppSelector } from '../store/hooks'
-import { setShowingIncorrect, undo, fetchNewPuzzle, type Difficulty } from '../store/sudokuSlice'
+import { setShowingIncorrect, undo, type Difficulty } from '../store/sudokuSlice'
+import { fetchNewPuzzleThunk } from '../store/fetchNewPuzzleThunk'
 import './GameControls.css'
 
 const GameControls = () => {
@@ -7,7 +8,7 @@ const GameControls = () => {
   const history = useAppSelector((state) => state.sudoku.history)
 
   const handleNewGame = (difficulty: Difficulty) => {
-    dispatch(fetchNewPuzzle(difficulty))
+    dispatch(fetchNewPuzzleThunk(difficulty))
   }
 
   return (
