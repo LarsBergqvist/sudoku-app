@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { fetchNewPuzzle, validateMockData } from '../utils/fetchNewPuzzle'
-
+import { createZeroedSudokuMatrix, createClearedIncorrectcellsMatrix } from '../utils/sudokuFunctions'
 export type Difficulty = 'Basic' | 'Hard' | 'VeryHard'
 
 export interface SudokuState {
@@ -28,17 +28,17 @@ interface SavedGameState {
 }
 
 const initialState: SudokuState = {
-  board: Array(9).fill(null).map(() => Array(9).fill(0)),
+  board: createZeroedSudokuMatrix(),
   solution: null,
   loading: false,
   error: null,
   isComplete: false,
   history: [],
-  incorrectCells: Array(9).fill(null).map(() => Array(9).fill(false)),
+  incorrectCells: createClearedIncorrectcellsMatrix(),
   selectedCell: null,
   currentDifficulty: 'Basic',
   showingIncorrect: false,
-  initialBoard: Array(9).fill(null).map(() => Array(9).fill(0)),
+  initialBoard: createZeroedSudokuMatrix(),
   selectorPosition: { x: 0, y: 0 }
 }
 
@@ -138,9 +138,9 @@ const sudokuSlice = createSlice({
         state.error = null
         state.isComplete = false
         state.history = []
-        state.incorrectCells = Array(9).fill(null).map(() => Array(9).fill(false))
+        state.incorrectCells = createClearedIncorrectcellsMatrix()
         state.selectedCell = null
-        state.initialBoard = Array(9).fill(null).map(() => Array(9).fill(0))
+        state.initialBoard = createZeroedSudokuMatrix()
         localStorage.removeItem('sudokuGameState')
       })
       .addCase(fetchNewPuzzle.fulfilled, (state, action) => {
@@ -150,7 +150,7 @@ const sudokuSlice = createSlice({
         state.initialBoard = action.payload.initialBoard
         state.isComplete = false
         state.history = []
-        state.incorrectCells = Array(9).fill(null).map(() => Array(9).fill(false))
+        state.incorrectCells = createClearedIncorrectcellsMatrix()
         state.selectedCell = null
         state.currentDifficulty = action.meta.arg
         

@@ -1,21 +1,22 @@
 import { describe, it, expect } from 'vitest'
 import sudokuReducer, { updateCell, SudokuState } from './sudokuSlice'
+import { createZeroedSudokuMatrix, createClearedIncorrectcellsMatrix } from '../utils/sudokuFunctions'
 
 describe('sudokuSlice', () => {
   describe('updateCell reducer', () => {
     it('should update the cell value and push the current board to history', () => {
       const initialState: SudokuState = {
-        board: Array(9).fill(null).map(() => Array(9).fill(0)),
+        board: createZeroedSudokuMatrix(),
         solution: null,
         loading: false,
         error: null,
         isComplete: false,
         history: [],
-        incorrectCells: Array(9).fill(null).map(() => Array(9).fill(false)),
+        incorrectCells: createClearedIncorrectcellsMatrix(),
         selectedCell: null,
         currentDifficulty: 'Basic',
         showingIncorrect: false,
-        initialBoard: Array(9).fill(null).map(() => Array(9).fill(0)),
+        initialBoard: createZeroedSudokuMatrix(),
         selectorPosition: { x: 0, y: 0 }
       }
 
@@ -29,25 +30,36 @@ describe('sudokuSlice', () => {
 
     it('should update incorrectCells and isComplete when solution is available', () => {
       const initialState: SudokuState = {
-        board: Array(9).fill(null).map(() => Array(9).fill(0)),
+        board: createZeroedSudokuMatrix(),
         solution: Array(9).fill(null).map(() => Array(9).fill(1)), // Mock solution
         loading: false,
         error: null,
         isComplete: false,
         history: [],
-        incorrectCells: Array(9).fill(null).map(() => Array(9).fill(false)),
+        incorrectCells: createClearedIncorrectcellsMatrix(),
         selectedCell: null,
         currentDifficulty: 'Basic',
         showingIncorrect: false,
-        initialBoard: Array(9).fill(null).map(() => Array(9).fill(0)),
+        initialBoard: createZeroedSudokuMatrix(),
         selectorPosition: { x: 0, y: 0 }
       }
 
-      const action = updateCell({ row: 0, col: 0, value: 1 })
-      const newState = sudokuReducer(initialState, action)
+      for(let row=0; row<9; row++) {
+        for(let col=0; col<9; col++) {
+          const action = updateCell({ row, col, value: 1 })
+          const newState = sudokuReducer(initialState, action)
 
-      expect(newState.incorrectCells[0][0]).toBe(false)
-      expect(newState.isComplete).toBe(false) // Since not all cells are filled correctly
+          if ( row === 9 && col === 9 ) {
+            // last update => complete 
+            expect(newState.incorrectCells[row][row]).toBe(false)
+            expect(newState.isComplete).toBe(true)
+          } else {
+            expect(newState.incorrectCells[row][row]).toBe(false)
+            expect(newState.isComplete).toBe(false)
+  
+          }
+        }
+      }
     })
   })
 })
