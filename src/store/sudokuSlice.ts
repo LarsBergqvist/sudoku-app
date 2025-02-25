@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import { fetchNewPuzzle, validateMockData } from '../utils/fetchNewPuzzle'
+import { fetchNewPuzzleThunk } from './fetchNewPuzzleThunk'
 import { createZeroedSudokuMatrix, createClearedIncorrectcellsMatrix } from '../utils/sudokuFunctions'
 export type Difficulty = 'Basic' | 'Hard' | 'VeryHard'
 
@@ -53,9 +53,6 @@ const validateBoard = (board: number[][], solution: number[][]): boolean[][] => 
     )
   )
 }
-
-// Call validation after store initialization
-validateMockData()
 
 const saveGameState = (state: SudokuState, initialBoard: number[][]) => {
   const savedState: SavedGameState = {
@@ -133,7 +130,7 @@ const sudokuSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchNewPuzzle.pending, (state, _) => {
+      .addCase(fetchNewPuzzleThunk.pending, (state, _) => {
         state.loading = true
         state.error = null
         state.isComplete = false
@@ -143,7 +140,7 @@ const sudokuSlice = createSlice({
         state.initialBoard = createZeroedSudokuMatrix()
         localStorage.removeItem('sudokuGameState')
       })
-      .addCase(fetchNewPuzzle.fulfilled, (state, action) => {
+      .addCase(fetchNewPuzzleThunk.fulfilled, (state, action) => {
         state.loading = false
         state.board = action.payload.grid
         state.solution = action.payload.solution
@@ -157,7 +154,7 @@ const sudokuSlice = createSlice({
         // Save initial state
         saveGameState(state, state.initialBoard)
       })
-      .addCase(fetchNewPuzzle.rejected, (state, action) => {
+      .addCase(fetchNewPuzzleThunk.rejected, (state, action) => {
         state.loading = false
         state.error = action.error.message ?? 'Failed to load puzzle'
       })
@@ -166,4 +163,3 @@ const sudokuSlice = createSlice({
 
 export const { updateCell, undo, selectCell, loadSavedGameState, setShowingIncorrect, setSelectorPosition } = sudokuSlice.actions
 export default sudokuSlice.reducer
-export { fetchNewPuzzle } 

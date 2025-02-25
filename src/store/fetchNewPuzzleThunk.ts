@@ -1,17 +1,17 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { API_URL } from '../config'
 import { mockSudokuData, SudokuResponse } from '../mocks/sudokuData'
-import { Difficulty } from '../store/sudokuSlice'
+import { Difficulty } from './sudokuSlice'
 
 // Create a function to check the environment
-export const getUseMockApi = () => {
+const getUseMockApi = () => {
   const useMockApi = import.meta.env.VITE_USE_MOCK_API === 'true'
   console.log('Environment check - USE_MOCK_API:', useMockApi)
   return useMockApi
 }
 
 // Parse grid string to 2D array
-export const parseGridString = (gridString: string): number[][] => {
+const parseGridString = (gridString: string): number[][] => {
   if (!gridString || typeof gridString !== 'string' || gridString.length !== 81) {
     console.error('Invalid grid string:', gridString)
     throw new Error('Invalid grid string format')
@@ -35,24 +35,7 @@ export const parseGridString = (gridString: string): number[][] => {
   return grid
 }
 
-// Move validation to be called when needed
-export const validateMockData = () => {
-  const USE_MOCK_API = getUseMockApi()
-  if (USE_MOCK_API) {
-    mockSudokuData.forEach((puzzle, index) => {
-      if (!puzzle.grid || !puzzle.solution || !puzzle.difficulty) {
-        console.error(`Invalid mock puzzle data at index ${index}:`, puzzle)
-        throw new Error('Invalid mock puzzle data')
-      }
-      if (puzzle.grid.length !== 81 || puzzle.solution.length !== 81) {
-        console.error(`Invalid puzzle length at index ${index}:`, puzzle)
-        throw new Error('Mock puzzle grid or solution has incorrect length')
-      }
-    })
-  }
-}
-
-export const fetchNewPuzzle = createAsyncThunk(
+export const fetchNewPuzzleThunk = createAsyncThunk(
   'sudoku/fetchNewPuzzle',
   async (difficulty: Difficulty) => {
     let data: SudokuResponse

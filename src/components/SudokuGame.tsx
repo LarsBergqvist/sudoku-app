@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '../store/hooks'
-import { fetchNewPuzzle, loadSavedGame, loadSavedGameState } from '../store/sudokuSlice'
+import { loadSavedGame, loadSavedGameState } from '../store/sudokuSlice'
+import { fetchNewPuzzleThunk } from '../store/fetchNewPuzzleThunk'
 import SudokuBoard from './SudokuBoard'
 import GameControls from './GameControls'
 import './SudokuGame.css'
@@ -23,7 +24,7 @@ const SudokuGame = () => {
     if (savedGame) {
       dispatch(loadSavedGameState(savedGame))
     } else {
-      dispatch(fetchNewPuzzle('Basic'))
+      dispatch(fetchNewPuzzleThunk('Basic'))
     }
   }, [dispatch])
 
@@ -40,7 +41,7 @@ const SudokuGame = () => {
     return (
       <div>
         <p>Error: {error}</p>
-        <button onClick={() => dispatch(fetchNewPuzzle('Basic'))}>Try Again</button>
+        <button onClick={() => dispatch(fetchNewPuzzleThunk('Basic'))}>Try Again</button>
       </div>
     )
   }
