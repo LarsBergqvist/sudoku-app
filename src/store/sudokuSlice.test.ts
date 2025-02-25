@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import sudokuReducer, { updateCell, SudokuState } from './sudokuSlice'
+import sudokuReducer, { updateCell, undo, SudokuState } from './sudokuSlice'
 import { createZeroedSudokuMatrix, createClearedIncorrectcellsMatrix } from '../utils/sudokuFunctions'
 
 describe('sudokuSlice', () => {
@@ -60,6 +60,43 @@ describe('sudokuSlice', () => {
           }
         }
       }
+    })
+  })
+
+  describe('undo reducer', () => {
+    it('should revert the board to the previous state', () => {
+      const initialState: SudokuState = {
+        board: createZeroedSudokuMatrix(),
+        solution: null,
+        loading: false,
+        error: null,
+        isComplete: false,
+        history: [],
+        incorrectCells: createClearedIncorrectcellsMatrix(),
+        selectedCell: null,
+        currentDifficulty: 'Basic',
+        showingIncorrect: false,
+        initialBoard: createZeroedSudokuMatrix(),
+        selectorPosition: { x: 0, y: 0 }
+      }
+
+      // Simulate a board change
+      const updatedState1 = sudokuReducer(initialState, updateCell({ row: 0, col: 0, value: 5 }))
+      expect(updatedState1.board[0][0]).toBe(5)
+
+      // Simulate another board change
+      const updatedState2 = sudokuReducer(updatedState1, updateCell({ row: 1, col: 1, value: 6 }))
+      expect(updatedState2.board[1][1]).toBe(6)
+      
+      // Undo the changes
+      const undoneState1 = sudokuReducer(updatedState2, undo())
+      expect(undoneState1.board[1][1]).toBe(0)
+      expect(undoneState1.history.length).toBe(1)
+
+      const undoneState2 = sudokuReducer(undoneState1, undo())
+      expect(undoneState2.board[0][0]).toBe(0)
+      expect(undoneState2.history.length).toBe(0)
+
     })
   })
 })
