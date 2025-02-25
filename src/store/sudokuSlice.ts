@@ -4,7 +4,7 @@ import { fetchNewPuzzle, validateMockData } from '../utils/fetchNewPuzzle'
 
 export type Difficulty = 'Basic' | 'Hard' | 'VeryHard'
 
-interface SudokuState {
+export interface SudokuState {
   board: number[][]
   solution: number[][] | null
   loading: boolean
