@@ -50,7 +50,7 @@ const SudokuGame = () => {
     <div className="game-container">
       {isComplete && (
         <div className="victory-message">
-          🎉 Congratulations! You've solved the puzzle! 🎉
+          🎉 Congratulations! You&apos;ve solved the puzzle! 🎉
         </div>
       )}
       <SudokuBoard />

@@ -130,7 +130,7 @@ const sudokuSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchNewPuzzleThunk.pending, (state, _) => {
+      .addCase(fetchNewPuzzleThunk.pending, (state) => {
         state.loading = true
         state.error = null
         state.isComplete = false
