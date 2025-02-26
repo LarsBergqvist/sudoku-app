@@ -1,0 +1,6 @@
+# Ignore built assets
+dist/**
+build/**
+.vite/**
+coverage/**
+node_modules/**
