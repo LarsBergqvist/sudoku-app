@@ -1,8 +1,8 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { API_URL } from '../config'
-import { mockSudokuData, SudokuResponse } from '../mocks/sudokuData'
+import { mockSudokuData } from '../mocks/sudokuData'
 import { Difficulty } from './sudokuSlice'
-
+import { SudokuResponse } from '../types/sudokuResponse'
 // Create a function to check the environment
 const getUseMockApi = () => {
   const useMockApi = import.meta.env.VITE_USE_MOCK_API === 'true'
@@ -10,8 +10,10 @@ const getUseMockApi = () => {
   return useMockApi
 }
 
-// Parse grid string to 2D array
-const parseGridString = (gridString: string): number[][] => {
+// Parse the sudoku data from the api into a 2D number array
+// The API returns the sudoku board as a string of 81 characters, representing a 9x9 grid of numbers 1-9
+// The puzzle property represents the hidden sudoku cell as a space
+const parseApiSudokuString = (gridString: string): number[][] => {
   if (!gridString || typeof gridString !== 'string' || gridString.length !== 81) {
     console.error('Invalid grid string:', gridString)
     throw new Error('Invalid grid string format')
@@ -22,7 +24,7 @@ const parseGridString = (gridString: string): number[][] => {
     const row: number[] = []
     for (let j = 0; j < 9; j++) {
       const char = gridString[i * 9 + j]
-      const value = char === ' ' || char === '.' ? 0 : parseInt(char)
+      const value = char === ' ' ? 0 : parseInt(char)
       if (isNaN(value)) {
         console.error('Invalid character in grid string:', char)
         throw new Error('Invalid character in grid string')
@@ -54,7 +56,7 @@ export const fetchNewPuzzleThunk = createAsyncThunk(
         const randomIndex = Math.floor(Math.random() * puzzles.length)
         const mockPuzzle = puzzles[randomIndex]
         
-        if (!mockPuzzle.grid || !mockPuzzle.solution) {
+        if (!mockPuzzle.puzzle || !mockPuzzle.solution) {
           throw new Error('Mock puzzle data is incomplete')
         }
         data = mockPuzzle
@@ -64,19 +66,19 @@ export const fetchNewPuzzleThunk = createAsyncThunk(
           throw new Error('Failed to fetch puzzle')
         }
         data = await response.json()
-        if (!data.grid || !data.solution) {
+        if (!data.puzzle || !data.solution) {
           throw new Error('API response is incomplete')
         }
       }
 
       // Parse grid and create a deep copy for initialBoard immediately
-      const grid = parseGridString(data.grid)
-      const initialBoard = JSON.parse(JSON.stringify(grid)) // Ensure deep copy
-      const solution = parseGridString(data.solution)
+      const puzzle = parseApiSudokuString(data.puzzle)
+      const initialBoard = JSON.parse(JSON.stringify(puzzle))
+      const solution = parseApiSudokuString(data.solution)
 
       // Validate all required data
-      if (!Array.isArray(grid) || grid.length !== 9 || grid.some(row => !Array.isArray(row) || row.length !== 9)) {
-        console.error('Invalid grid structure:', grid)
+      if (!Array.isArray(puzzle) || puzzle.length !== 9 || puzzle.some(row => !Array.isArray(row) || row.length !== 9)) {
+        console.error('Invalid grid structure:', puzzle)
         throw new Error('Invalid grid structure after parsing')
       }
 
@@ -85,20 +87,15 @@ export const fetchNewPuzzleThunk = createAsyncThunk(
         throw new Error('Invalid solution structure after parsing')
       }
 
-      if (!Array.isArray(initialBoard) || initialBoard.length !== 9 || initialBoard.some(row => !Array.isArray(row) || row.length !== 9)) {
-        console.error('Invalid initialBoard structure:', initialBoard)
-        throw new Error('Invalid initialBoard structure after creation')
-      }
-
       // Create the result object
       const result = {
-        grid,
+        puzzle,
         solution,
         initialBoard
       }
 
       // Validate the complete result object
-      if (!result.grid || !result.solution || !result.initialBoard) {
+      if (!result.puzzle || !result.solution || !result.initialBoard) {
         console.error('Invalid result object:', result)
         throw new Error('Result object is incomplete')
       }

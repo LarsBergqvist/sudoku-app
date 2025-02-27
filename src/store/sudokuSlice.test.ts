@@ -6,7 +6,7 @@ describe('sudokuSlice', () => {
   describe('updateCell reducer', () => {
     it('should update the cell value and push the current board to history', () => {
       const initialState: SudokuState = {
-        board: createZeroedSudokuMatrix(),
+        puzzle: createZeroedSudokuMatrix(),
         solution: null,
         loading: false,
         error: null,
@@ -23,14 +23,14 @@ describe('sudokuSlice', () => {
       const action = updateCell({ row: 0, col: 0, value: 5 })
       const newState = sudokuReducer(initialState, action)
 
-      expect(newState.board[0][0]).toBe(5)
+      expect(newState.puzzle[0][0]).toBe(5)
       expect(newState.history.length).toBe(1)
       expect(newState.history[0][0][0]).toBe(0) // Ensure the history has the previous state
     })
 
     it('should update incorrectCells and isComplete when solution is available', () => {
       const initialState: SudokuState = {
-        board: createZeroedSudokuMatrix(),
+        puzzle: createZeroedSudokuMatrix(),
         solution: Array(9).fill(null).map(() => Array(9).fill(1)), // Mock solution
         loading: false,
         error: null,
@@ -66,7 +66,7 @@ describe('sudokuSlice', () => {
   describe('undo reducer', () => {
     it('should revert the board to the previous state', () => {
       const initialState: SudokuState = {
-        board: createZeroedSudokuMatrix(),
+        puzzle: createZeroedSudokuMatrix(),
         solution: null,
         loading: false,
         error: null,
@@ -82,19 +82,19 @@ describe('sudokuSlice', () => {
 
       // Simulate a board change
       const updatedState1 = sudokuReducer(initialState, updateCell({ row: 0, col: 0, value: 5 }))
-      expect(updatedState1.board[0][0]).toBe(5)
+      expect(updatedState1.puzzle[0][0]).toBe(5)
 
       // Simulate another board change
       const updatedState2 = sudokuReducer(updatedState1, updateCell({ row: 1, col: 1, value: 6 }))
-      expect(updatedState2.board[1][1]).toBe(6)
+      expect(updatedState2.puzzle[1][1]).toBe(6)
       
       // Undo the changes
       const undoneState1 = sudokuReducer(updatedState2, undo())
-      expect(undoneState1.board[1][1]).toBe(0)
+      expect(undoneState1.puzzle[1][1]).toBe(0)
       expect(undoneState1.history.length).toBe(1)
 
       const undoneState2 = sudokuReducer(undoneState1, undo())
-      expect(undoneState2.board[0][0]).toBe(0)
+      expect(undoneState2.puzzle[0][0]).toBe(0)
       expect(undoneState2.history.length).toBe(0)
 
     })

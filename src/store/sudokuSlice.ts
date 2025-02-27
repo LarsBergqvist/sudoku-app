@@ -5,7 +5,7 @@ import { createZeroedSudokuMatrix, createClearedIncorrectcellsMatrix } from '../
 export type Difficulty = 'Basic' | 'Hard' | 'VeryHard'
 
 export interface SudokuState {
-  board: number[][]
+  puzzle: number[][]
   solution: number[][] | null
   loading: boolean
   error: string | null
@@ -20,7 +20,7 @@ export interface SudokuState {
 }
 
 interface SavedGameState {
-  board: number[][]
+  puzzle: number[][]
   solution: number[][] | null
   initialBoard: number[][]
   history: number[][][]
@@ -28,7 +28,7 @@ interface SavedGameState {
 }
 
 const initialState: SudokuState = {
-  board: createZeroedSudokuMatrix(),
+  puzzle: createZeroedSudokuMatrix(),
   solution: null,
   loading: false,
   error: null,
@@ -42,12 +42,12 @@ const initialState: SudokuState = {
   selectorPosition: { x: 0, y: 0 }
 }
 
-const checkSolution = (board: number[][]): boolean => {
-  return !board.some(row => row.includes(0))
+const checkSolution = (puzzle: number[][]): boolean => {
+  return !puzzle.some(row => row.includes(0))
 }
 
-const validateBoard = (board: number[][], solution: number[][]): boolean[][] => {
-  return board.map((row, i) => 
+const validateBoard = (puzzle: number[][], solution: number[][]): boolean[][] => {
+  return puzzle.map((row, i) => 
     row.map((cell, j) => 
       cell !== 0 && cell !== solution[i][j]
     )
@@ -56,7 +56,7 @@ const validateBoard = (board: number[][], solution: number[][]): boolean[][] => 
 
 const saveGameState = (state: SudokuState, initialBoard: number[][]) => {
   const savedState: SavedGameState = {
-    board: state.board,
+    puzzle: state.puzzle,
     solution: state.solution,
     initialBoard: initialBoard,
     history: state.history,
@@ -67,7 +67,14 @@ const saveGameState = (state: SudokuState, initialBoard: number[][]) => {
 
 export const loadSavedGame = (): SavedGameState | null => {
   const saved = localStorage.getItem('sudokuGameState')
-  return saved ? JSON.parse(saved) : null
+  // Check if the saved game is valid
+  if (saved) {
+    const savedGame = JSON.parse(saved)
+    if (savedGame.puzzle && savedGame.solution && savedGame.initialBoard && savedGame.history && savedGame.difficulty) {
+      return savedGame
+    }
+  }
+  return null
 }
 
 const sudokuSlice = createSlice({
@@ -77,12 +84,12 @@ const sudokuSlice = createSlice({
     updateCell: (state, action: PayloadAction<{ row: number; col: number; value: number }>) => {
       const { row, col, value } = action.payload
       
-      state.history.push(state.board.map(row => [...row]))
-      state.board[row][col] = value
+      state.history.push(state.puzzle.map(row => [...row]))
+      state.puzzle[row][col] = value
       
       if (state.solution) {
-        state.incorrectCells = validateBoard(state.board, state.solution)
-        const isFilled = checkSolution(state.board)
+        state.incorrectCells = validateBoard(state.puzzle, state.solution)
+        const isFilled = checkSolution(state.puzzle)
         state.isComplete = isFilled && !state.incorrectCells.some(row => row.some(cell => cell))
       }
       
@@ -93,15 +100,15 @@ const sudokuSlice = createSlice({
       } else {
         // If no saved game exists, use the current board as initial board
         // This happens when the game is first launched
-        saveGameState(state, state.board.map(row => [...row]))
+        saveGameState(state, state.puzzle.map(row => [...row]))
       }
     },
     undo: (state) => {
       if (state.history.length > 0) {
-        state.board = state.history.pop()!
+        state.puzzle = state.history.pop()!
         if (state.solution) {
-          state.incorrectCells = validateBoard(state.board, state.solution)
-          const isFilled = checkSolution(state.board)
+          state.incorrectCells = validateBoard(state.puzzle, state.solution)
+          const isFilled = checkSolution(state.puzzle)
           state.isComplete = isFilled && !state.incorrectCells.some(row => row.some(cell => cell))
         }
       }
@@ -110,14 +117,14 @@ const sudokuSlice = createSlice({
       state.selectedCell = action.payload
     },
     loadSavedGameState: (state, action: PayloadAction<SavedGameState>) => {
-      state.board = action.payload.board
+      state.puzzle = action.payload.puzzle
       state.solution = action.payload.solution
       state.history = action.payload.history
       state.currentDifficulty = action.payload.difficulty
       state.initialBoard = action.payload.initialBoard
       if (state.solution) {
-        state.incorrectCells = validateBoard(state.board, state.solution)
-        state.isComplete = checkSolution(state.board) && 
+        state.incorrectCells = validateBoard(state.puzzle, state.solution)
+        state.isComplete = checkSolution(state.puzzle) && 
           !state.incorrectCells.some(row => row.some(cell => cell))
       }
     },
@@ -142,7 +149,7 @@ const sudokuSlice = createSlice({
       })
       .addCase(fetchNewPuzzleThunk.fulfilled, (state, action) => {
         state.loading = false
-        state.board = action.payload.grid
+        state.puzzle = action.payload.puzzle
         state.solution = action.payload.solution
         state.initialBoard = action.payload.initialBoard
         state.isComplete = false

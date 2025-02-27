@@ -8,7 +8,7 @@ import useSudokuInteractions from '../hooks/useSudokuInteractions'
 const SudokuBoard: React.FC = () => {
   const dispatch = useAppDispatch()
   const { 
-    board, 
+    puzzle, 
     incorrectCells, 
     selectedCell, 
     showingIncorrect,
@@ -25,14 +25,14 @@ const SudokuBoard: React.FC = () => {
   return (
     <div className="sudoku-board">
       <div className="board-background" onClick={handleBoardClick}>
-        {board.map((row, rowIndex) => (
+        {puzzle.map((row, rowIndex) => (
           <div key={rowIndex} className="row">
             {row.map((cell, colIndex) => (
               <div
                 key={`${rowIndex}-${colIndex}`}
                 className={`cell 
                   ${showingIncorrect && incorrectCells[rowIndex][colIndex] ? 'incorrect' : ''}
-                  ${board[rowIndex][colIndex] !== 0 ? 'entered' : ''}
+                  ${puzzle[rowIndex][colIndex] !== 0 ? 'entered' : ''}
                   ${initialBoard && initialBoard[rowIndex][colIndex] !== 0 ? 'initial' : ''}
                   ${selectedCell?.row === rowIndex && selectedCell?.col === colIndex ? 'selected' : ''}
                   `}
