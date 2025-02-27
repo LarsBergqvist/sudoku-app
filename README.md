@@ -26,7 +26,7 @@ git clone https://github.com/LarsBergqvist/sudoku-puzzler.git
 cd sudoku-puzzler
 dotnet build
 export ASPNETCORE_ENVIRONMENT=Development
-dotnet run --project ./Sudoku.Web/Sudoku.Web.csproj
+dotnet run --project Sudoku.Web/Sudoku.Web.csproj --http_ports "5100" --https_ports "5400"
 ```
 
 On Windows:
@@ -35,7 +35,7 @@ git clone https://github.com/LarsBergqvist/sudoku-puzzler.git
 cd sudoku-puzzler
 dotnet build
 set ASPNETCORE_ENVIRONMENT=Development
-dotnet run --project ./Sudoku.Web/Sudoku.Web.csproj
+dotnet run --project Sudoku.Web/Sudoku.Web.csproj --http_ports "5100" --https_ports "5400"
 ```
 
 Then, modify `.env.development` in the sudoku-app project to point to the local API and set VITE_USE_MOCK_API to false.
