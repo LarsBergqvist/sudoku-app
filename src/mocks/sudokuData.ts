@@ -1,8 +1,4 @@
-export interface SudokuResponse {
-  puzzle: string
-  solution: string
-  difficulty: 'Basic' | 'Hard' | 'VeryHard'
-}
+import { SudokuResponse } from '../types/sudokuResponse'
 
 // Sample puzzles for each difficulty level
 export const mockSudokuData: SudokuResponse[] = [
