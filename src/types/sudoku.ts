@@ -1,5 +1,5 @@
 export interface SudokuPuzzle {
-  grid: number[][]
+  puzzle: number[][]
   solution: number[][]
   difficulty: string
 } 

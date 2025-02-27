@@ -142,7 +142,7 @@ const sudokuSlice = createSlice({
       })
       .addCase(fetchNewPuzzleThunk.fulfilled, (state, action) => {
         state.loading = false
-        state.board = action.payload.grid
+        state.board = action.payload.puzzle
         state.solution = action.payload.solution
         state.initialBoard = action.payload.initialBoard
         state.isComplete = false
