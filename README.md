@@ -20,10 +20,21 @@ By default, the app uses a mock API to fetch a random sudoku puzzle with a speci
 
 To use the real API that generates new random puzzles for every request, you need to clone the sudoku-puzzler api (C#, NET8) and run it locally:
 
+On mac/linux:
 ```bash
 git clone https://github.com/LarsBergqvist/sudoku-puzzler.git
 cd sudoku-puzzler
 dotnet build
+export ASPNETCORE_ENVIRONMENT=Development
+dotnet run --project ./Sudoku.Web/Sudoku.Web.csproj
+```
+
+On Windows:
+```bash
+git clone https://github.com/LarsBergqvist/sudoku-puzzler.git
+cd sudoku-puzzler
+dotnet build
+set ASPNETCORE_ENVIRONMENT=Development
 dotnet run --project ./Sudoku.Web/Sudoku.Web.csproj
 ```
 
@@ -31,7 +42,7 @@ Then, modify `.env.development` in the sudoku-app project to point to the local 
 
 ```bash
 VITE_USE_MOCK_API=false
-VITE_API_URL='http://localhost:5000'
+VITE_API_URL='https://localhost:5400'
 ```
 
 
