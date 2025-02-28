@@ -1,1 +1,5 @@
-export type Difficulty = 'Basic' | 'Hard' | 'VeryHard' 
+export enum Difficulty {
+  Basic = 'Basic',
+  Hard = 'Hard',
+  VeryHard = 'VeryHard'
+} 

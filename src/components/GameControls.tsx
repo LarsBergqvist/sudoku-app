@@ -36,19 +36,19 @@ const GameControls = () => {
       <div className="difficulty-buttons">
         <button 
           className="new-game-button basic" 
-          onClick={() => handleNewGame('Basic')}
+          onClick={() => handleNewGame(Difficulty.Basic)}
         >
           New Basic Game
         </button>
         <button 
           className="new-game-button hard" 
-          onClick={() => handleNewGame('Hard')}
+          onClick={() => handleNewGame(Difficulty.Hard)}
         >
           New Hard Game
         </button>
         <button 
           className="new-game-button very-hard" 
-          onClick={() => handleNewGame('VeryHard')}
+          onClick={() => handleNewGame(Difficulty.VeryHard)}
         >
           New Very Hard Game
         </button>
