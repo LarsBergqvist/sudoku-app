@@ -1,7 +1,8 @@
 import { useAppDispatch, useAppSelector } from '../store/hooks'
-import { setShowingIncorrect, undo, type Difficulty } from '../store/sudokuSlice'
+import { setShowingIncorrect, undo } from '../store/sudokuSlice'
 import { fetchNewPuzzleThunk } from '../store/fetchNewPuzzleThunk'
 import './GameControls.css'
+import { Difficulty } from '../types/difficulty'
 
 const GameControls = () => {
   const dispatch = useAppDispatch()
@@ -35,19 +36,19 @@ const GameControls = () => {
       <div className="difficulty-buttons">
         <button 
           className="new-game-button basic" 
-          onClick={() => handleNewGame('Basic')}
+          onClick={() => handleNewGame(Difficulty.Basic)}
         >
           New Basic Game
         </button>
         <button 
           className="new-game-button hard" 
-          onClick={() => handleNewGame('Hard')}
+          onClick={() => handleNewGame(Difficulty.Hard)}
         >
           New Hard Game
         </button>
         <button 
           className="new-game-button very-hard" 
-          onClick={() => handleNewGame('VeryHard')}
+          onClick={() => handleNewGame(Difficulty.VeryHard)}
         >
           New Very Hard Game
         </button>

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import sudokuReducer, { updateCell, undo, SudokuState } from './sudokuSlice'
 import { createZeroedSudokuMatrix, createClearedIncorrectcellsMatrix } from '../utils/sudokuFunctions'
-
+import { Difficulty } from '../types/difficulty'
 describe('sudokuSlice', () => {
   describe('updateCell reducer', () => {
     it('should update the cell value and push the current board to history', () => {
@@ -14,7 +14,7 @@ describe('sudokuSlice', () => {
         history: [],
         incorrectCells: createClearedIncorrectcellsMatrix(),
         selectedCell: null,
-        currentDifficulty: 'Basic',
+        currentDifficulty: Difficulty.Basic,
         showingIncorrect: false,
         initialBoard: createZeroedSudokuMatrix(),
         selectorPosition: { x: 0, y: 0 }
@@ -38,7 +38,7 @@ describe('sudokuSlice', () => {
         history: [],
         incorrectCells: createClearedIncorrectcellsMatrix(),
         selectedCell: null,
-        currentDifficulty: 'Basic',
+        currentDifficulty: Difficulty.Basic,
         showingIncorrect: false,
         initialBoard: createZeroedSudokuMatrix(),
         selectorPosition: { x: 0, y: 0 }
@@ -74,7 +74,7 @@ describe('sudokuSlice', () => {
         history: [],
         incorrectCells: createClearedIncorrectcellsMatrix(),
         selectedCell: null,
-        currentDifficulty: 'Basic',
+        currentDifficulty: Difficulty.Basic,
         showingIncorrect: false,
         initialBoard: createZeroedSudokuMatrix(),
         selectorPosition: { x: 0, y: 0 }

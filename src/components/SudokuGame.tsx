@@ -6,7 +6,7 @@ import SudokuBoard from './SudokuBoard'
 import GameControls from './GameControls'
 import './SudokuGame.css'
 import useSudokuInteractions from '../hooks/useSudokuInteractions'
-
+import { Difficulty } from '../types/difficulty'
 const SudokuGame = () => {
   const dispatch = useAppDispatch()
   const { 
@@ -24,7 +24,7 @@ const SudokuGame = () => {
     if (savedGame) {
       dispatch(loadSavedGameState(savedGame))
     } else {
-      dispatch(fetchNewPuzzleThunk('Basic'))
+      dispatch(fetchNewPuzzleThunk(Difficulty.Basic))
     }
   }, [dispatch])
 
@@ -41,7 +41,7 @@ const SudokuGame = () => {
     return (
       <div>
         <p>Error: {error}</p>
-        <button onClick={() => dispatch(fetchNewPuzzleThunk('Basic'))}>Try Again</button>
+        <button onClick={() => dispatch(fetchNewPuzzleThunk(Difficulty.Basic))}>Try Again</button>
       </div>
     )
   }

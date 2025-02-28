@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { fetchNewPuzzleThunk } from './fetchNewPuzzleThunk'
 import { createZeroedSudokuMatrix, createClearedIncorrectcellsMatrix } from '../utils/sudokuFunctions'
-export type Difficulty = 'Basic' | 'Hard' | 'VeryHard'
+import { Difficulty } from '../types/difficulty'
 
 export interface SudokuState {
   puzzle: number[][]
@@ -36,7 +36,7 @@ const initialState: SudokuState = {
   history: [],
   incorrectCells: createClearedIncorrectcellsMatrix(),
   selectedCell: null,
-  currentDifficulty: 'Basic',
+  currentDifficulty: Difficulty.Basic,
   showingIncorrect: false,
   initialBoard: createZeroedSudokuMatrix(),
   selectorPosition: { x: 0, y: 0 }
