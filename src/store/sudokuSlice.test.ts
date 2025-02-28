@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import sudokuReducer, { updateCell, undo, SudokuState } from './sudokuSlice'
 import { createZeroedSudokuMatrix, createClearedIncorrectcellsMatrix } from '../utils/sudokuFunctions'
 import { Difficulty } from '../types/difficulty'
+
 describe('sudokuSlice', () => {
   describe('updateCell reducer', () => {
     it('should update the cell value and push the current board to history', () => {
@@ -56,7 +57,6 @@ describe('sudokuSlice', () => {
           } else {
             expect(newState.incorrectCells[row][row]).toBe(false)
             expect(newState.isComplete).toBe(false)
-  
           }
         }
       }
@@ -92,11 +92,9 @@ describe('sudokuSlice', () => {
       const undoneState1 = sudokuReducer(updatedState2, undo())
       expect(undoneState1.puzzle[1][1]).toBe(0)
       expect(undoneState1.history.length).toBe(1)
-
       const undoneState2 = sudokuReducer(undoneState1, undo())
       expect(undoneState2.puzzle[0][0]).toBe(0)
       expect(undoneState2.history.length).toBe(0)
-
     })
   })
 })

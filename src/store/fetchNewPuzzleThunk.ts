@@ -4,16 +4,15 @@ import { mockSudokuData } from '../mocks/sudokuData'
 import { SudokuResponse } from '../types/sudokuResponse'
 import type { Difficulty } from '../types/difficulty'
 
-// Create a function to check the environment
 const getUseMockApi = () => {
   const useMockApi = import.meta.env.VITE_USE_MOCK_API === 'true'
   console.log('Environment check - USE_MOCK_API:', useMockApi)
   return useMockApi
 }
 
-// Parse the sudoku data from the api into a 2D number array
 // The API returns the sudoku board as a string of 81 characters, representing a 9x9 grid of numbers 1-9
-// The puzzle property represents the hidden sudoku cell as a space
+// The puzzle property of the API response object represents the hidden sudoku cell as a space
+// Parse the sudoku data from the API into the internal representation in the app: a 2D number array with blank spaces represented as 0
 const parseApiSudokuString = (gridString: string): number[][] => {
   if (!gridString || typeof gridString !== 'string' || gridString.length !== 81) {
     console.error('Invalid grid string:', gridString)
@@ -47,13 +46,11 @@ export const fetchNewPuzzleThunk = createAsyncThunk(
 
     try {
       if (USE_MOCK_API) {
-        // Filter puzzles by difficulty
         const puzzles = mockSudokuData.filter(puzzle => puzzle.difficulty === difficulty)
         if (puzzles.length === 0) {
           throw new Error(`No mock puzzle found for difficulty: ${difficulty}`)
         }
         
-        // Select a random puzzle
         const randomIndex = Math.floor(Math.random() * puzzles.length)
         const mockPuzzle = puzzles[randomIndex]
         
