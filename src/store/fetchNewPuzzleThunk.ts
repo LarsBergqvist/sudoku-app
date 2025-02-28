@@ -1,8 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 import { API_URL } from '../config'
 import { mockSudokuData } from '../mocks/sudokuData'
-import { Difficulty } from './sudokuSlice'
 import { SudokuResponse } from '../types/sudokuResponse'
+import type { Difficulty } from '../types/difficulty'
+
 // Create a function to check the environment
 const getUseMockApi = () => {
   const useMockApi = import.meta.env.VITE_USE_MOCK_API === 'true'

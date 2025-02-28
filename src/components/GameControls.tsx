@@ -1,7 +1,8 @@
 import { useAppDispatch, useAppSelector } from '../store/hooks'
-import { setShowingIncorrect, undo, type Difficulty } from '../store/sudokuSlice'
+import { setShowingIncorrect, undo } from '../store/sudokuSlice'
 import { fetchNewPuzzleThunk } from '../store/fetchNewPuzzleThunk'
 import './GameControls.css'
+import { Difficulty } from '../types/difficulty'
 
 const GameControls = () => {
   const dispatch = useAppDispatch()

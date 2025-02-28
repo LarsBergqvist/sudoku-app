@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { fetchNewPuzzleThunk } from './fetchNewPuzzleThunk'
 import { createZeroedSudokuMatrix, createClearedIncorrectcellsMatrix } from '../utils/sudokuFunctions'
-export type Difficulty = 'Basic' | 'Hard' | 'VeryHard'
+import type { Difficulty } from '../types/difficulty'
 
 export interface SudokuState {
   puzzle: number[][]

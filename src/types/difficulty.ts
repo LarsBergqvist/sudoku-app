@@ -1,0 +1,1 @@
+export type Difficulty = 'Basic' | 'Hard' | 'VeryHard' 
